@@ -1,0 +1,19 @@
+{
+  "name": "re-treat",
+  "version": "1.0.0",
+  "description": "Re-treat project codebase",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/re-treat/mozilla-summer-mvp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/re-treat/mozilla-summer-mvp/issues"
+  },
+  "homepage": "https://github.com/re-treat/mozilla-summer-mvp#readme"
+}
