@@ -1,4 +1,4 @@
-var firebaseConfig = {
+const firebaseConfig = {
     apiKey: "AIzaSyA5lBWuTAWthRTTqKpnSraoMwMAa7Y4Tws",
     authDomain: "re-treat-73296.firebaseapp.com",
     databaseURL: "https://re-treat-73296.firebaseio.com",
@@ -9,4 +9,4 @@ var firebaseConfig = {
     measurementId: "G-BN342D6WN2"
 };
 
-export firebaseConfig;
+module.exports = firebaseConfig;
