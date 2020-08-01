@@ -5,7 +5,6 @@ require("firebase/firestore");
 firebase.initializeApp(fbConfig);
 var db = firebase.firestore();
 
-
 /*
  * Adds the exercise to the db
  * @param{string} name: name of the exercise, should be in the format of name_of_the_exercise
