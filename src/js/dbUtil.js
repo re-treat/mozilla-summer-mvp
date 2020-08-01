@@ -87,13 +87,32 @@ var db = firebase.firestore();
 	});
 }
 
-function queryExercise(label, question){
+async function queryExercise(label, question, result){
+	if(!Array.isArray(result)) {
+		console.error("Result is not an array.");
+	}
 	switch(question) {
 		case "q1": 
+			await db.collection("labels_q1").doc(label).get().then(function(doc){ 
+				let data = doc.data(); 
+				for(let ex of Object.keys(data)){ result.push(ex); }
+			});
+			break;
 		case "q2":
+			await db.collection("labels_q2").doc(label).get().then(function(doc){ 
+				let data = doc.data(); 
+				for(let ex of Object.keys(data)){ result.push(ex); }
+			});
+			break;
 		case "q3":
+			await db.collection("labels_q3").doc(label).get().then(function(doc){ 
+				let data = doc.data(); 
+				for(let ex of Object.keys(data)){ result.push(ex); }
+			});
+			break;
+		default: 
+			console.error("Invalid question input");
 	}
 }
 
-
-module.exports = { addExercise }
+module.exports = { addExercise, queryExercise }
