@@ -90,6 +90,7 @@ var db = firebase.firestore();
 	});
 	return status;
 }
+
 /*
  * Finds the exercises associated with the given label and question
  * @param{string} label: label to search
@@ -121,6 +122,40 @@ async function queryExercise(label, question){
 	}
 }
 
-async function getLabels(){}
+/*
+ * Get the labels for the given question
+ * @param{string} question: q1, q2, or q3
+ * @returns{string[]} labels: array containing the labels for the question
+ */
+async function getLabels(question){
+	let labels = new Array();
+	switch(question){
+		case "q1": 
+			await db.collection("labels_q1").get().then(function(querySnapshot){
+				querySnapshot.forEach(function(doc){
+				  	labels.push(doc.id);
+				});
+			});
+			break;
+		case "q2":
+			await db.collection("labels_q2").get().then(function(querySnapshot){
+				querySnapshot.forEach(function(doc){
+					labels.push(doc.id);
+				});
+			});
+			break;
+		case "q3":
+			await db.collection("labels_q3").get().then(function(querySnapshot){
+				querySnapshot.forEach(function(doc){
+				  	labels.push(doc.id);
+				});
+			});
+			break;
+		default:
+			throw "Invalid question input.";
+			break;
+	}
+	return labels;
+}
 
-module.exports = { addExercise, queryExercise }
+module.exports = { addExercise, queryExercise, getLabels }

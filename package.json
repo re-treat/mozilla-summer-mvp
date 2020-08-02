@@ -15,5 +15,6 @@
   "bugs": {
     "url": "https://github.com/re-treat/mozilla-summer-mvp/issues"
   },
-  "homepage": "https://github.com/re-treat/mozilla-summer-mvp#readme"
+  "homepage": "https://github.com/re-treat/mozilla-summer-mvp#readme",
+  "dependencies": {}
 }
