@@ -12,11 +12,12 @@ var db = firebase.firestore();
  * @param{string[]} labels_q1: array of labels as strings for question 1
  * @param{string[]} labels_q2: array of labels as strings for question 2
  * @param{string[]} labels_q3: array of labels as strings for question 3
+ * @returns{Promise}: Returns resolved promise if success, otherwise return rejected promise
  */
- function addExercise(name, file, labels_q1, labels_q2, labels_q3){
+ async function addExercise(name, file, labels_q1, labels_q2, labels_q3){
 	if(!Array.isArray(labels_q1) || !Array.isArray(labels_q2) || !Array.isArray(labels_q3)) { 
 		console.error("Invalid label input");
-		return;
+		return Promise.reject(false);
 	}
 
 	// Add exersice to the db
@@ -81,38 +82,45 @@ var db = firebase.firestore();
 					throw error;
 				});
 			});
+			return Promise.resolve(true);
 		}
 	}).catch(function(err){ 
-		console.error(err); 
+		console.error(err);
+		return Promise.reject(false);
 	});
+	return status;
 }
-
-async function queryExercise(label, question, result){
-	if(!Array.isArray(result)) {
-		console.error("Result is not an array.");
-	}
+/*
+ * Finds the exercises associated with the given label and question
+ * @param{string} label: label to search
+ * @param{string} question: the question the label belongs to: q1, q2, or q3
+ * @param{string[]} result: stores the result after querying
+ * @returns{Promise}: returns resolved promise with array of exercises, otherwise return rejected promise
+ */
+async function queryExercise(label, question){
+	let doc;
 	switch(question) {
 		case "q1": 
-			await db.collection("labels_q1").doc(label).get().then(function(doc){ 
-				let data = doc.data(); 
-				for(let ex of Object.keys(data)){ result.push(ex); }
-			});
+			doc = await db.collection("labels_q1").doc(label).get();
+			if (!doc.exists) { return Promise.resolve(new Array()); } 
+			else { return Promise.resolve(Object.keys(doc.data())); }
 			break;
 		case "q2":
-			await db.collection("labels_q2").doc(label).get().then(function(doc){ 
-				let data = doc.data(); 
-				for(let ex of Object.keys(data)){ result.push(ex); }
-			});
+			doc = await db.collection("labels_q2").doc(label).get();
+			if (!doc.exists) { return Promise.resolve(new Array()); } 
+			else { return Promise.resolve(Object.keys(doc.data())); }
 			break;
 		case "q3":
-			await db.collection("labels_q3").doc(label).get().then(function(doc){ 
-				let data = doc.data(); 
-				for(let ex of Object.keys(data)){ result.push(ex); }
-			});
+			doc = await db.collection("labels_q3").doc(label).get();
+			if (!doc.exists) { return Promise.resolve(new Array()); } 
+			else { return Promise.resolve(Object.keys(doc.data())); }
 			break;
 		default: 
-			console.error("Invalid question input");
+			throw "Invalid question input";
+			break;
 	}
 }
+
+async function getLabels(){}
 
 module.exports = { addExercise, queryExercise }
