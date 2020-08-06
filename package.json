@@ -10,11 +10,16 @@
     "type": "git",
     "url": "git+https://github.com/re-treat/mozilla-summer-mvp.git"
   },
-  "author": "",
+  "author": "Vinita Sinha",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/re-treat/mozilla-summer-mvp/issues"
   },
   "homepage": "https://github.com/re-treat/mozilla-summer-mvp#readme",
-  "dependencies": {}
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.6.0"
+  }
 }
