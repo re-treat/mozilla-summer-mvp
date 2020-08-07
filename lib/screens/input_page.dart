@@ -26,7 +26,7 @@ class _InputPageState extends State<InputPage> {
   }
 
   Future<List<String>> getLabels(String question) async {
-    final http.Response response = await http.post('localhost:8080/getLabels',
+    final http.Response response = await http.post('http://127.0.0.1:8080/getLabels',
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
