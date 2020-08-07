@@ -4,16 +4,24 @@
   "description": "Re-treat project codebase",
   "main": "index.js",
   "scripts": {
+    "start": "node src/js/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/re-treat/mozilla-summer-mvp.git"
   },
-  "author": "",
+  "author": "Vinita Sinha",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/re-treat/mozilla-summer-mvp/issues"
   },
-  "homepage": "https://github.com/re-treat/mozilla-summer-mvp#readme"
+  "homepage": "https://github.com/re-treat/mozilla-summer-mvp#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "firebase": "^7.17.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.6.0"
+  }
 }
