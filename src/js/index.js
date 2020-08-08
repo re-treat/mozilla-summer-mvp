@@ -1,4 +1,6 @@
 const dbUtil = require("./dbUtil.js");
+const { matchExercise } = require("./matching.js");
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
@@ -26,17 +28,18 @@ app.post('/addExercise', async (req, res) => {
   });
 });
 
-app.post('/queryExercise', async (req, res) => {
-  const label = req.body.label;
-  const question = req.body.question;
+app.post('/matchExercise', async (req, res) => {
+  const labels_q1 = req.body.labels_q1;
+  const labels_q2 = req.body.labels_q2;
+  const labels_q3 = req.body.labels_q3;
+  const size = req.body.size;
 
-  const promise = dbUtil.queryExercise(label, question);
+  const promise = matchExercise(labels_q1, labels_q2, labels_q3, size);
   promise.then(function (value) {
-    console.log(value);
-    const exercises_arr = value.map((ex) => ({ [ex]: ex.url }));
     console.log("Queried exercises succesfully!");
+    console.log(value);
     res.status(200);
-    res.send(exercises_arr);
+    res.send(value);
   }, function (value) {
     console.log("error in querying db for exercises");
     res.status(500);

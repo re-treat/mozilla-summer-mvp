@@ -1,11 +1,11 @@
-import 'dart:convert';
 import 'dart:core';
-import "package:http/http.dart" as http;
+
 import 'package:flutter/material.dart';
 import 'package:retreatapp/components/bottom_button.dart';
 import 'package:retreatapp/components/reusable_question_card.dart';
 import 'package:retreatapp/constants.dart';
 import 'package:retreatapp/screens/results_page.dart';
+import 'package:retreatapp/components/httpUtil.dart' as httpUtil;
 
 class InputPage extends StatefulWidget {
   @override
@@ -19,28 +19,7 @@ class _InputPageState extends State<InputPage> {
     'How do you want to feel?'
   ];
 
-  var myFeelingsChoices;
-
-  _InputPageState() {
-    getLabels("q1").then((value) => myFeelingsChoices = value);
-  }
-
-  Future<List<String>> getLabels(String question) async {
-    final http.Response response = await http.post('http://127.0.0.1:8080/getLabels',
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'question': question,
-      }),
-    );
-    print(response.body);
-    return json.decode(response.body);
-  }
-
-
-
-  /*[
+  final myFeelingsChoices = [
     {
       "display": "Angry",
       "value": "Angry",
@@ -61,7 +40,7 @@ class _InputPageState extends State<InputPage> {
       "display": "Embarrassed",
       "value": "Embarrassed",
     },
-  ]; */
+  ];
 
   final causeOfFeelingChoices = [
     {

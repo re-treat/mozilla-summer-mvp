@@ -77,3 +77,5 @@ const { queryExercise } = require("./dbUtil.js");
  	}
  	return matches;
  }
+
+ module.exports = { matchExercise }
