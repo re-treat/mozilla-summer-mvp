@@ -2,8 +2,11 @@ const dbUtil = require("./dbUtil.js");
 const { matchExercise } = require("./matching.js");
 
 const express = require('express');
+const cors = require("cors");
 const bodyParser = require('body-parser');
+
 const app = express();
+
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
@@ -28,7 +31,7 @@ app.post('/addExercise', async (req, res) => {
   });
 });
 
-app.post('/matchExercise', async (req, res) => {
+app.post('/matchExercise', cors(), async (req, res) => {
   const labels_q1 = req.body.labels_q1;
   const labels_q2 = req.body.labels_q2;
   const labels_q3 = req.body.labels_q3;
@@ -48,7 +51,7 @@ app.post('/matchExercise', async (req, res) => {
 
 });
 
- app.post('/getLabels', async(req, res) => {
+app.post('/getLabels', cors(), async(req, res) => {
   const question = req.body.question;
   const promise = dbUtil.getLabels(question);
   promise.then(function (value){
