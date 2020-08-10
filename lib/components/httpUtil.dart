@@ -3,7 +3,7 @@ import 'dart:convert';
 
 final host = "http://localhost:8080";
 
-Future<List<dynamic>> getLabels(String question) async {
+Future<List<String>> getLabels(String question) async {
   var url = host+"/getLabels";
   var header = {  'Content-Type': 'application/json; charset=UTF-8' };
   var body = { "question" : question };
@@ -11,12 +11,12 @@ Future<List<dynamic>> getLabels(String question) async {
   var response = await http.post(url, headers: header, body: jsonEncode(body));
   if(response.statusCode == 200){
     var result = jsonDecode(response.body);
-    return result;
+    return result.cast<String>();
   }
   else{ return null; }
 }
 
-Future<List<dynamic>> matchExercise(List<String> labels_q1, List<String> labels_q2, List<String> labels_q3, int size) async {
+Future<List<String>> matchExercise(List<String> labels_q1, List<String> labels_q2, List<String> labels_q3, int size) async {
   var url = host+"/matchExercise";
   var header = {  'Content-Type': 'application/json; charset=UTF-8' };
   var body = {
@@ -29,7 +29,7 @@ Future<List<dynamic>> matchExercise(List<String> labels_q1, List<String> labels_
   var response = await http.post(url, headers: header, body: jsonEncode(body));
   if(response.statusCode == 200){
     var result = jsonDecode(response.body);
-    return result;
+    return result.cast<String>();
   }
   else{ return null; }
 }

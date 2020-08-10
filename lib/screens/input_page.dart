@@ -23,7 +23,12 @@ class _InputPageState extends State<InputPage> {
   var causeOfFeelingChoices = [];
   var desiredFeelingChoices = [];
 
+  ReusableQuestionCard form_q1;
+  ReusableQuestionCard form_q2;
+  ReusableQuestionCard form_q3;
+
   _InputPageState() {
+    // Fetch available labels from the server
     httpUtil.getLabels("q1").then((labels) => {
       labels.forEach((label) => {
         myFeelingsChoices.add({
@@ -32,7 +37,6 @@ class _InputPageState extends State<InputPage> {
         })
       })
     });
-
     httpUtil.getLabels("q2").then((labels) => {
       labels.forEach((label) => {
         causeOfFeelingChoices.add({
@@ -41,7 +45,6 @@ class _InputPageState extends State<InputPage> {
         })
       })
     });
-
     httpUtil.getLabels("q3").then((labels) => {
       labels.forEach((label) => {
         desiredFeelingChoices.add({
@@ -50,6 +53,19 @@ class _InputPageState extends State<InputPage> {
         })
       })
     });
+    // Construct the forms
+    form_q1 = ReusableQuestionCard(
+      question: questions[0],
+      choices: myFeelingsChoices,
+    );
+    form_q2 = ReusableQuestionCard(
+      question: questions[1],
+      choices: causeOfFeelingChoices,
+    );
+    form_q3 = ReusableQuestionCard(
+      question: questions[2],
+      choices: desiredFeelingChoices,
+    );
   }
 
   @override
@@ -66,35 +82,29 @@ class _InputPageState extends State<InputPage> {
         children: <Widget>[
           Expanded(
             flex: 3,
-            child: ReusableQuestionCard(
-              question: questions[0],
-              choices: myFeelingsChoices,
-            ),
+            child: form_q1
           ),
           Expanded(
             flex: 3,
-            child: ReusableQuestionCard(
-              question: questions[1],
-              choices: causeOfFeelingChoices,
-            ),
+            child: form_q2
           ),
           Expanded(
             flex: 3,
-            child: ReusableQuestionCard(
-              question: questions[2],
-              choices: desiredFeelingChoices,
-            ),
+            child: form_q3
           ),
           BottomButton(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ResultsPage(
-                    recommendedExercises: [""],
+              httpUtil.matchExercise(form_q1.getResult(), form_q2.getResult(), form_q3.getResult(), 3).then((exercises) => {
+                print(exercises),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ResultsPage(
+                      recommendedExercises: exercises,
+                    ),
                   ),
-                ),
-              );
+                )
+              });
             },
             buttonTitle: 'SHOW RECOMMENDATIONS',
           ),
