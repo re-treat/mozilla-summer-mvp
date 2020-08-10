@@ -19,70 +19,38 @@ class _InputPageState extends State<InputPage> {
     'How do you want to feel?'
   ];
 
-  final myFeelingsChoices = [
-    {
-      "display": "Angry",
-      "value": "Angry",
-    },
-    {
-      "display": "Sad",
-      "value": "Sad",
-    },
-    {
-      "display": "Anxious",
-      "value": "Anxious",
-    },
-    {
-      "display": "Hurt",
-      "value": "Hurt",
-    },
-    {
-      "display": "Embarrassed",
-      "value": "Embarrassed",
-    },
-  ];
+  var myFeelingsChoices = [];
+  var causeOfFeelingChoices = [];
+  var desiredFeelingChoices = [];
 
-  final causeOfFeelingChoices = [
-    {
-      "display": "Work",
-      "value": "Work",
-    },
-    {
-      "display": "School",
-      "value": "School",
-    },
-    {
-      "display": "Finance",
-      "value": "Finance",
-    },
-    {
-      "display": "Relationship",
-      "value": "Relationship",
-    },
-  ];
+  _InputPageState() {
+    httpUtil.getLabels("q1").then((labels) => {
+      labels.forEach((label) => {
+        myFeelingsChoices.add({
+          "display": label,
+          "value": label,
+        })
+      })
+    });
 
-  final desiredFeelingChoices = [
-    {
-      "display": "Thankful",
-      "value": "Thankful",
-    },
-    {
-      "display": "Relaxed",
-      "value": "Relaxed",
-    },
-    {
-      "display": "Relieved",
-      "value": "Relieved",
-    },
-    {
-      "display": "Confident",
-      "value": "Confident",
-    },
-    {
-      "display": "Motivated",
-      "value": "Motivated",
-    },
-  ];
+    httpUtil.getLabels("q2").then((labels) => {
+      labels.forEach((label) => {
+        causeOfFeelingChoices.add({
+          "display": label,
+          "value": label,
+        })
+      })
+    });
+
+    httpUtil.getLabels("q3").then((labels) => {
+      labels.forEach((label) => {
+        desiredFeelingChoices.add({
+          "display": label,
+          "value": label,
+        })
+      })
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
