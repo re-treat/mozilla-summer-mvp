@@ -1,7 +1,10 @@
 const dbUtil = require("./dbUtil.js");
 const express = require('express');
+const cors = require("cors");
 const bodyParser = require('body-parser');
+
 const app = express();
+
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
@@ -26,7 +29,7 @@ app.post('/addExercise', async (req, res) => {
   });
 });
 
-app.post('/queryExercise', async (req, res) => {
+app.post('/queryExercise', cors(), async (req, res) => {
   const label = req.body.label;
   const question = req.body.question;
 
@@ -45,7 +48,7 @@ app.post('/queryExercise', async (req, res) => {
 
 });
 
- app.post('/getLabels', async(req, res) => {
+ app.post('/getLabels', cors(), async(req, res) => {
   const question = req.body.question;
   const promise = dbUtil.getLabels(question);
   promise.then(function (value){
