@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:retreatapp/constants.dart';
 
 import 'screens/input_page.dart';
 
@@ -12,8 +11,8 @@ class ReTreatApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.light().copyWith(
-        primaryColor: kLightBlueColor,
-        scaffoldBackgroundColor: kDarkBlueColor,
+        primaryColor: Colors.white,
+        scaffoldBackgroundColor: Colors.white,
       ),
       home: InputPage(),
     );
