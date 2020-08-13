@@ -94,7 +94,7 @@ class _InputPageState extends State<InputPage> {
           ),
           BottomButton(
             onTap: () {
-              httpUtil.matchExercise(form_q1.getResult(), form_q2.getResult(), form_q3.getResult(), 3).then((exercises) => {
+              httpUtil.matchExercise(form_q1.getResult(), form_q2.getResult(), form_q3.getResult(), 5).then((exercises) => {
                 print(exercises),
                 Navigator.push(
                   context,
