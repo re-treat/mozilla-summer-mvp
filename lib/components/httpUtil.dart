@@ -1,7 +1,7 @@
 import "package:http/http.dart" as http;
 import 'dart:convert';
 
-final host = "http://localhost:8080";
+final host = "https://re-treat.uc.r.appspot.com";
 
 Future<List<String>> getLabels(String question) async {
   var url = host+"/getLabels";
@@ -40,5 +40,7 @@ void main() {
   List<String> q2 = [];
   List<String> q3 = [];
   matchExercise(q1, q2, q3, 1).then((value) => {print(value)});
+
+  getLabels("q1").then((value) => {print(value)});
 }
- */
+*/

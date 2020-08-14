@@ -5,14 +5,9 @@ class ReusableQuestionCard extends StatefulWidget {
   ReusableQuestionCard({@required this.question, @required this.choices});
   final String question;
   final List choices;
-  _ReusableQuestionCardState state;
-
-  List<String> getResult(){
-    return state.getResult();
-  }
 
   @override
-  _ReusableQuestionCardState createState() => this.state = _ReusableQuestionCardState();
+  _ReusableQuestionCardState createState() => _ReusableQuestionCardState();
 }
 
 class _ReusableQuestionCardState extends State<ReusableQuestionCard> {
@@ -35,10 +30,6 @@ class _ReusableQuestionCardState extends State<ReusableQuestionCard> {
         _userAnswersResult = _userAnswers.toString();
       });
     }
-  }
-
-  List<String> getResult(){
-    return this._userAnswers.cast<String>();
   }
 
   @override
