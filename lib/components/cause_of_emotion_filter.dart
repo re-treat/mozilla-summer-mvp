@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:retreatapp/constants.dart';
+import 'package:retreatapp/components/httpUtil.dart' as httpUtil;
 
 class CauseOfEmotionFilterEntry {
   const CauseOfEmotionFilterEntry(this.name);
@@ -12,15 +13,15 @@ class CauseOfEmotionFilter extends StatefulWidget {
 }
 
 class CauseOfEmotionFilterState extends State<CauseOfEmotionFilter> {
-  final List<CauseOfEmotionFilterEntry> _cause = <CauseOfEmotionFilterEntry>[
-    const CauseOfEmotionFilterEntry('work'),
-    const CauseOfEmotionFilterEntry('school'),
-    const CauseOfEmotionFilterEntry('finance'),
-    const CauseOfEmotionFilterEntry('relationship'),
-  ];
   List<String> _filters = <String>[];
 
-  Iterable<Widget> get causeOfEmotionWidgets sync* {
+  Stream<Widget> get causeOfEmotionWidgets async* {
+    List<CauseOfEmotionFilterEntry> _cause = <CauseOfEmotionFilterEntry>[];
+    await httpUtil.getLabels("q2").then((labels) => {
+      labels.forEach((label) => {
+        _cause.add(CauseOfEmotionFilterEntry(label))
+      }),
+    });
     for (final CauseOfEmotionFilterEntry cause in _cause) {
       yield Padding(
         padding: const EdgeInsets.all(4.0),
@@ -55,16 +56,34 @@ class CauseOfEmotionFilterState extends State<CauseOfEmotionFilter> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Wrap(
-          spacing: 12.0,
-          runSpacing: 8.0,
-          children: causeOfEmotionWidgets.toList(),
-        ),
-//        Text('Look for: ${_filters.join(', ')}'),
-      ],
+    return FutureBuilder<List<Widget>>(
+      future: causeOfEmotionWidgets.toList(),
+      builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot){
+        if(snapshot.hasData){
+          return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget> [
+                Wrap(
+                  spacing: 12.0,
+                  runSpacing: 8.0,
+                  children: snapshot.data,
+                )
+              ]
+          );
+        }
+        else if(snapshot.hasError){
+          return Text(
+            'Error loading labels.',
+            textAlign: TextAlign.center,
+          );
+        }
+        else{
+          return Text(
+            'Loading labels...',
+            textAlign: TextAlign.center,
+          );
+        }
+      },
     );
   }
 }
