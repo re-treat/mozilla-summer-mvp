@@ -8,18 +8,28 @@ class CauseOfEmotionFilterEntry {
 }
 
 class CauseOfEmotionFilter extends StatefulWidget {
+  CauseOfEmotionFilterState state;
+
   @override
-  State createState() => CauseOfEmotionFilterState();
+  State createState() => this.state = CauseOfEmotionFilterState();
+
+  List<String> getLabels(){
+    return this.state.getLabels();
+  }
 }
 
 class CauseOfEmotionFilterState extends State<CauseOfEmotionFilter> {
   List<String> _filters = <String>[];
 
+  List<String> getLabels(){
+    return _filters;
+  }
+
   Stream<Widget> get causeOfEmotionWidgets async* {
     List<CauseOfEmotionFilterEntry> _cause = <CauseOfEmotionFilterEntry>[];
     await httpUtil.getLabels("q2").then((labels) => {
       labels.forEach((label) => {
-        _cause.add(CauseOfEmotionFilterEntry(label))
+        _cause.add(CauseOfEmotionFilterEntry(label)),
       }),
     });
     for (final CauseOfEmotionFilterEntry cause in _cause) {

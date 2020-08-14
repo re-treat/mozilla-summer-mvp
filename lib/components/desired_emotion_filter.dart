@@ -8,18 +8,28 @@ class DesiredEmotionFilterEntry {
 }
 
 class DesiredEmotionFilter extends StatefulWidget {
+  DesiredEmotionFilterState state;
+
   @override
-  State createState() => DesiredEmotionFilterState();
+  State createState() => this.state = DesiredEmotionFilterState();
+
+  List<String> getLabels(){
+    return this.state.getLabels();
+  }
 }
 
 class DesiredEmotionFilterState extends State<DesiredEmotionFilter> {
   List<String> _filters = <String>[];
 
+  List<String> getLabels(){
+    return _filters;
+  }
+
   Stream<Widget> get emotionWidgets async* {
     List<DesiredEmotionFilterEntry> _emotion = <DesiredEmotionFilterEntry>[];
     await httpUtil.getLabels("q3").then((labels) => {
       labels.forEach((label) => {
-        _emotion.add(DesiredEmotionFilterEntry(label))
+        _emotion.add(DesiredEmotionFilterEntry(label)),
       }),
     });
     for (final DesiredEmotionFilterEntry emotion in _emotion) {

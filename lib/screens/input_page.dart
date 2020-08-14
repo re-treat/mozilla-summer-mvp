@@ -5,6 +5,7 @@ import 'package:retreatapp/components/desired_emotion_filter.dart';
 import 'package:retreatapp/components/emotion_filter.dart';
 import 'package:retreatapp/constants.dart';
 import 'package:retreatapp/screens/results_page.dart';
+import 'package:retreatapp/components/httpUtil.dart' as httpUtil;
 
 class InputPage extends StatefulWidget {
   @override
@@ -13,6 +14,16 @@ class InputPage extends StatefulWidget {
 
 class _InputPageState extends State<InputPage> {
   Color answerTextColor = kInactiveCardColour;
+
+  EmotionFilter filter_q1;
+  CauseOfEmotionFilter filter_q2;
+  DesiredEmotionFilter filter_q3;
+
+  _InputPageState() {
+    filter_q1 = EmotionFilter();
+    filter_q2 = CauseOfEmotionFilter();
+    filter_q3 = DesiredEmotionFilter();
+  }
 
   final questions = [
     'What emotion(s) are you feeling right now?',
@@ -70,7 +81,7 @@ class _InputPageState extends State<InputPage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                        child: EmotionFilter(),
+                        child: filter_q1,
                       ),
                     ],
                   ),
@@ -101,7 +112,7 @@ class _InputPageState extends State<InputPage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                        child: CauseOfEmotionFilter(),
+                        child: filter_q2,
                       ),
                     ],
                   ),
@@ -132,7 +143,7 @@ class _InputPageState extends State<InputPage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                        child: DesiredEmotionFilter(),
+                        child: filter_q3,
                       ),
                     ],
                   ),
@@ -168,16 +179,19 @@ class _InputPageState extends State<InputPage> {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ResultsPage(
-                              recommendedExercises: [""],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                        httpUtil.matchExercise(filter_q1.getLabels(),
+                            filter_q2.getLabels(), filter_q3.getLabels(), 5).then((exerciseList) => {
+                              print(exerciseList),
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ResultsPage(
+                                    recommendedExercises: exerciseList,
+                                  ),
+                                ),
+                              )
+                          });
+                        })
                   ],
                 ),
               ),

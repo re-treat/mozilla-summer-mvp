@@ -9,35 +9,28 @@ class EmotionFilterEntry {
 }
 
 class EmotionFilter extends StatefulWidget {
+  EmotionFilterState state;
+
   @override
-  State createState() => EmotionFilterState();
+  State createState() => this.state = EmotionFilterState();
+
+  List<String> getLabels(){
+    return this.state.getLabels();
+  }
 }
 
 class EmotionFilterState extends State<EmotionFilter> {
-  List<EmotionFilterEntry> _emotion;
-  /*
-  final List<EmotionFilterEntry> _emotion = <EmotionFilterEntry>[
-    const EmotionFilterEntry('frustrated'),
-    const EmotionFilterEntry('impatient'),
-    const EmotionFilterEntry('angry'),
-    const EmotionFilterEntry('disappointed'),
-    const EmotionFilterEntry('regretful'),
-    const EmotionFilterEntry('paralyzed'),
-    const EmotionFilterEntry('pessimistic'),
-    const EmotionFilterEntry('stressed'),
-    const EmotionFilterEntry('vulnerable'),
-    const EmotionFilterEntry('worried'),
-    const EmotionFilterEntry('self-conscious'),
-    const EmotionFilterEntry('guilty'),
-  ];
-  */
   List<String> _filters = <String>[];
+
+  List<String> getLabels(){
+    return _filters;
+  }
 
   Stream<Widget> get emotionWidgets async* {
     List<EmotionFilterEntry> _emotion = <EmotionFilterEntry>[];
     await httpUtil.getLabels("q1").then((labels) => {
       labels.forEach((label) => {
-        _emotion.add(EmotionFilterEntry(label))
+        _emotion.add(EmotionFilterEntry(label)),
       }),
     });
     for (final EmotionFilterEntry emotion in _emotion) {

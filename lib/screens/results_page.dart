@@ -23,7 +23,7 @@ class ResultsPage extends StatelessWidget {
     ),
   );
 
-  final List recommendedExercises;
+  final List<String> recommendedExercises;
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +42,8 @@ class ResultsPage extends StatelessWidget {
               Expanded(
                   flex: 2,
                   child: new StaggeredGridView.countBuilder(
-                    crossAxisCount: (exercises.length / 2).round(),
-                    itemCount: exercises.length,
+                    crossAxisCount: (recommendedExercises.length / 2).round(),
+                    itemCount: recommendedExercises.length,
                     itemBuilder: (BuildContext context, int index) => InkWell(
                       onTap: () {
                         Navigator.of(context).pop();
@@ -51,7 +51,7 @@ class ResultsPage extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ExercisePage(
-                                instructions: exercises[index].instructions),
+                                instructions: exercises[recommendedExercises[index]].instructions),
                           ),
                         );
                       },
@@ -77,7 +77,7 @@ class ResultsPage extends StatelessWidget {
                                         child: Align(
                                           alignment: Alignment.centerLeft,
                                           child: Text(
-                                            herb.code + exercises[index].name,
+                                            herb.code + exercises[recommendedExercises[index]].name,
                                             style: kCardHeaderTextStyle,
                                           ),
                                         ),
@@ -114,7 +114,7 @@ class ResultsPage extends StatelessWidget {
                                               child: ListTile(
                                                 subtitle: Text(
                                                   target.code +
-                                                      'Target emotion: ${exercises[i].labelsTargetEmotion.join(', ')}',
+                                                      'Target emotion: ${exercises[recommendedExercises[i]].labelsTargetEmotion.join(', ')}',
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                 ),
@@ -126,7 +126,7 @@ class ResultsPage extends StatelessWidget {
                                               child: ListTile(
                                                 subtitle: Text(
                                                   trophy.code +
-                                                      'Effect/goal: ${exercises[i].labelsEffectAndGoal.join(', ')}',
+                                                      'Effect/goal: ${exercises[recommendedExercises[i]].labelsEffectAndGoal.join(', ')}',
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                 ),
