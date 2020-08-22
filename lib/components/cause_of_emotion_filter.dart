@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:retreatapp/constants.dart';
-import 'package:retreatapp/components/httpUtil.dart' as httpUtil;
+
+import '../models/brain.dart';
+import '../models/exercise.dart';
 
 class CauseOfEmotionFilterEntry {
   const CauseOfEmotionFilterEntry(this.name);
@@ -8,34 +10,31 @@ class CauseOfEmotionFilterEntry {
 }
 
 class CauseOfEmotionFilter extends StatefulWidget {
-  CauseOfEmotionFilterState state;
+  final Brain brain;
+  CauseOfEmotionFilter({this.brain});
 
   @override
-  State createState() => this.state = CauseOfEmotionFilterState();
-
-  List<String> getLabels(){
-    return this.state.getLabels();
-  }
+  State createState() => CauseOfEmotionFilterState();
 }
 
 class CauseOfEmotionFilterState extends State<CauseOfEmotionFilter> {
+  Set<Exercise> recommendedExercises = Set<Exercise>();
+
+  final List<CauseOfEmotionFilterEntry> _cause = <CauseOfEmotionFilterEntry>[
+    const CauseOfEmotionFilterEntry('work'),
+    const CauseOfEmotionFilterEntry('academics'),
+    const CauseOfEmotionFilterEntry('financial'),
+    const CauseOfEmotionFilterEntry('interpersonal relationships'),
+  ];
   List<String> _filters = <String>[];
 
-  List<String> getLabels(){
-    return _filters;
-  }
-
-  Stream<Widget> get causeOfEmotionWidgets async* {
-    List<CauseOfEmotionFilterEntry> _cause = <CauseOfEmotionFilterEntry>[];
-    await httpUtil.getLabels("q2").then((labels) => {
-      labels.forEach((label) => {
-        _cause.add(CauseOfEmotionFilterEntry(label)),
-      }),
-    });
+  Iterable<Widget> get causeOfEmotionWidgets sync* {
     for (final CauseOfEmotionFilterEntry cause in _cause) {
       yield Padding(
         padding: const EdgeInsets.all(4.0),
         child: FilterChip(
+          elevation: 2.0,
+          pressElevation: 0.0,
           selectedColor: kLightBlueColor,
           backgroundColor: kLightGrayColor,
           shape: RoundedRectangleBorder(
@@ -58,6 +57,7 @@ class CauseOfEmotionFilterState extends State<CauseOfEmotionFilter> {
                 });
               }
             });
+            widget.brain.updateCausesOfEmotion(_filters);
           },
         ),
       );
@@ -66,34 +66,32 @@ class CauseOfEmotionFilterState extends State<CauseOfEmotionFilter> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Widget>>(
-      future: causeOfEmotionWidgets.toList(),
-      builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot){
-        if(snapshot.hasData){
-          return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget> [
-                Wrap(
-                  spacing: 12.0,
-                  runSpacing: 8.0,
-                  children: snapshot.data,
-                )
-              ]
-          );
-        }
-        else if(snapshot.hasError){
-          return Text(
-            'Error loading labels.',
-            textAlign: TextAlign.center,
-          );
-        }
-        else{
-          return Text(
-            'Loading labels...',
-            textAlign: TextAlign.center,
-          );
-        }
-      },
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Wrap(
+          spacing: kSpacing,
+          runSpacing: kRunSpacing,
+          children: causeOfEmotionWidgets.toList(),
+        ),
+        //        Text('Look for: ${_filters.join(', ')}'),
+        //        Text('Total matches: ${getRecommendExercises().length}'),
+        //        Text(
+        //            'Look for: ${getRecommendExercises().map((e) => e.name).toString()}'),
+//        Text('Look for: ${_filters.join(', ')}'),
+      ],
     );
+  }
+
+  Set<Exercise> getRecommendExercises() {
+//    List<Exercise> recommendedExercises = [];
+    exercises.forEach((exercise) {
+      if (Set.of(_filters)
+          .intersection(Set.of(exercise.labelsCauseOfEmotion))
+          .isNotEmpty) {
+        recommendedExercises.add(exercise);
+      }
+    });
+    return recommendedExercises;
   }
 }

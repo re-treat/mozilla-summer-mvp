@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:retreatapp/constants.dart';
-import 'package:retreatapp/components/httpUtil.dart' as httpUtil;
+import 'package:retreatapp/models/brain.dart';
+import 'package:retreatapp/models/exercise.dart';
 
 class EmotionFilterEntry {
   const EmotionFilterEntry(this.name);
@@ -9,34 +9,39 @@ class EmotionFilterEntry {
 }
 
 class EmotionFilter extends StatefulWidget {
-  EmotionFilterState state;
+  final Brain brain;
+  EmotionFilter({this.brain});
 
   @override
-  State createState() => this.state = EmotionFilterState();
-
-  List<String> getLabels(){
-    return this.state.getLabels();
-  }
+  State createState() => EmotionFilterState();
 }
 
 class EmotionFilterState extends State<EmotionFilter> {
+  Set<Exercise> recommendedExercises = Set<Exercise>();
+
+  final List<EmotionFilterEntry> _emotion = <EmotionFilterEntry>[
+//    const EmotionFilterEntry('angry'),
+    const EmotionFilterEntry('disappointed'),
+    const EmotionFilterEntry('frustrated'),
+    const EmotionFilterEntry('guilty'),
+//    const EmotionFilterEntry('impatient'),
+    const EmotionFilterEntry('paralyzed'),
+    const EmotionFilterEntry('pessimistic'),
+    const EmotionFilterEntry('regretful'),
+    const EmotionFilterEntry('self-conscious'),
+    const EmotionFilterEntry('stressed'),
+    const EmotionFilterEntry('vulnerable'),
+    const EmotionFilterEntry('worried'),
+  ];
   List<String> _filters = <String>[];
 
-  List<String> getLabels(){
-    return _filters;
-  }
-
-  Stream<Widget> get emotionWidgets async* {
-    List<EmotionFilterEntry> _emotion = <EmotionFilterEntry>[];
-    await httpUtil.getLabels("q1").then((labels) => {
-      labels.forEach((label) => {
-        _emotion.add(EmotionFilterEntry(label)),
-      }),
-    });
+  Iterable<Widget> get emotionWidgets sync* {
     for (final EmotionFilterEntry emotion in _emotion) {
       yield Padding(
         padding: const EdgeInsets.all(4.0),
         child: FilterChip(
+          elevation: 2.0,
+          pressElevation: 0.0,
           selectedColor: kLightBlueColor,
           backgroundColor: kLightGrayColor,
           shape: RoundedRectangleBorder(
@@ -53,12 +58,19 @@ class EmotionFilterState extends State<EmotionFilter> {
             setState(() {
               if (value) {
                 _filters.add(emotion.name);
+//                widget.answers.addAnswer(emotion.name);
               } else {
                 _filters.removeWhere((String name) {
+//                  widget.answers.deleteAnswer(emotion.name);
                   return name == emotion.name;
                 });
               }
             });
+            widget.brain.updateCurrentEmotions(_filters);
+//            recommendedExercises = getRecommendExercises();
+//            recommendedExercises.forEach((exercise) {
+//              widget.brain.recommendedExercises.add(exercise);
+//            });
           },
         ),
       );
@@ -67,34 +79,31 @@ class EmotionFilterState extends State<EmotionFilter> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Widget>>(
-      future: emotionWidgets.toList(),
-      builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot){
-        if(snapshot.hasData){
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget> [
-              Wrap(
-                spacing: 12.0,
-                runSpacing: 8.0,
-                children: snapshot.data,
-              )
-            ]
-        );
-        }
-        else if(snapshot.hasError){
-          return Text(
-            'Error loading labels.',
-            textAlign: TextAlign.center,
-          );
-        }
-        else{
-          return Text(
-            'Loading labels...',
-            textAlign: TextAlign.center,
-          );
-        }
-      },
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Wrap(
+          spacing: kSpacing,
+          runSpacing: kRunSpacing,
+          children: emotionWidgets.toList(),
+        ),
+//        Text('Look for: ${_filters.join(', ')}'),
+//        Text('Total matches: ${getRecommendExercises().length}'),
+//        Text(
+//            'Look for: ${getRecommendExercises().map((e) => e.name).toString()}'),
+      ],
     );
+  }
+
+  Set<Exercise> getRecommendExercises() {
+//    List<Exercise> recommendedExercises = [];
+    exercises.forEach((exercise) {
+      if (Set.of(_filters)
+          .intersection(Set.of(exercise.labelsTargetEmotion))
+          .isNotEmpty) {
+        recommendedExercises.add(exercise);
+      }
+    });
+    return recommendedExercises;
   }
 }

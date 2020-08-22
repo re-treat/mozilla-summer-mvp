@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:retreatapp/constants.dart';
-import 'package:retreatapp/components/httpUtil.dart' as httpUtil;
+
+import '../models/brain.dart';
+import '../models/exercise.dart';
 
 class DesiredEmotionFilterEntry {
   const DesiredEmotionFilterEntry(this.name);
@@ -8,34 +10,32 @@ class DesiredEmotionFilterEntry {
 }
 
 class DesiredEmotionFilter extends StatefulWidget {
-  DesiredEmotionFilterState state;
+  final Brain brain;
+  DesiredEmotionFilter({this.brain});
 
   @override
-  State createState() => this.state = DesiredEmotionFilterState();
-
-  List<String> getLabels(){
-    return this.state.getLabels();
-  }
+  State createState() => DesiredEmotionFilterState();
 }
 
 class DesiredEmotionFilterState extends State<DesiredEmotionFilter> {
+  Set<Exercise> recommendedExercises = Set<Exercise>();
+
+  final List<DesiredEmotionFilterEntry> _emotion = <DesiredEmotionFilterEntry>[
+    const DesiredEmotionFilterEntry('confident'),
+    const DesiredEmotionFilterEntry('motivated'),
+    const DesiredEmotionFilterEntry('relaxed'),
+    const DesiredEmotionFilterEntry('relieved'),
+    const DesiredEmotionFilterEntry('thankful'),
+  ];
   List<String> _filters = <String>[];
 
-  List<String> getLabels(){
-    return _filters;
-  }
-
-  Stream<Widget> get emotionWidgets async* {
-    List<DesiredEmotionFilterEntry> _emotion = <DesiredEmotionFilterEntry>[];
-    await httpUtil.getLabels("q3").then((labels) => {
-      labels.forEach((label) => {
-        _emotion.add(DesiredEmotionFilterEntry(label)),
-      }),
-    });
+  Iterable<Widget> get emotionWidgets sync* {
     for (final DesiredEmotionFilterEntry emotion in _emotion) {
       yield Padding(
         padding: const EdgeInsets.all(4.0),
         child: FilterChip(
+          elevation: 2.0,
+          pressElevation: 0.0,
           selectedColor: kLightBlueColor,
           backgroundColor: kLightGrayColor,
           shape: RoundedRectangleBorder(
@@ -58,6 +58,7 @@ class DesiredEmotionFilterState extends State<DesiredEmotionFilter> {
                 });
               }
             });
+            widget.brain.updateDesiredEmotions(_filters);
           },
         ),
       );
@@ -66,34 +67,32 @@ class DesiredEmotionFilterState extends State<DesiredEmotionFilter> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Widget>>(
-      future: emotionWidgets.toList(),
-      builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot){
-        if(snapshot.hasData){
-          return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget> [
-                Wrap(
-                  spacing: 12.0,
-                  runSpacing: 8.0,
-                  children: snapshot.data,
-                )
-              ]
-          );
-        }
-        else if(snapshot.hasError){
-          return Text(
-            'Error loading labels.',
-            textAlign: TextAlign.center,
-          );
-        }
-        else{
-          return Text(
-            'Loading labels...',
-            textAlign: TextAlign.center,
-          );
-        }
-      },
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Wrap(
+          spacing: kSpacing,
+          runSpacing: kRunSpacing,
+          children: emotionWidgets.toList(),
+        ),
+//        Text('Look for: ${_filters.join(', ')}'),
+//        Text('Total matches: ${getRecommendExercises().length}'),
+//        Text(
+//            'Look for: ${getRecommendExercises().map((e) => e.name).toString()}'),
+        //  Text('Look for: ${_filters.join(', ')}'),
+      ],
     );
+  }
+
+  Set<Exercise> getRecommendExercises() {
+//    List<Exercise> recommendedExercises = [];
+    exercises.forEach((exercise) {
+      if (Set.of(_filters)
+          .intersection(Set.of(exercise.labelsEffectAndGoal))
+          .isNotEmpty) {
+        recommendedExercises.add(exercise);
+      }
+    });
+    return recommendedExercises;
   }
 }

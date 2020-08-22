@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:oktoast/oktoast.dart';
+import 'package:provider/provider.dart';
 import 'package:retreatapp/components/card_box_decoration.dart';
 import 'package:retreatapp/constants.dart';
-import 'package:retreatapp/exercise.dart';
+import 'package:retreatapp/models/brain.dart';
+import 'package:retreatapp/models/exercise.dart';
+import 'package:retreatapp/screens/review_page.dart';
 
 //https://stackoverflow.com/questions/59130685/flutter-populating-steps-content-based-on-previous-selection-on-stepper
 
 class ExercisePage extends StatefulWidget {
-  final List<Instruction> instructions;
-
-  const ExercisePage({this.instructions});
+  final Exercise exercise;
+  const ExercisePage({this.exercise});
 
   @override
   _ExercisePageState createState() => new _ExercisePageState();
@@ -16,11 +19,33 @@ class ExercisePage extends StatefulWidget {
 
 class _ExercisePageState extends State<ExercisePage> {
   int _currentStep = 0;
+  var answers = new Map();
+  final myController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    myController.addListener(_printLatestValue);
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the widget tree.
+    // This also removes the _printLatestValue listener.
+    myController.dispose();
+    super.dispose();
+  }
+
+  _printLatestValue() {
+    print("Second text field: ${myController.text}");
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<Instruction> instructions = widget.instructions;
+    final List<Instruction> instructions = widget.exercise.instructions;
     final totalSteps = instructions.length;
+    Brain brain = Provider.of<Brain>(context, listen: false);
 
     List<Step> generateSteps() {
       List<Step> steps = [];
@@ -33,7 +58,7 @@ class _ExercisePageState extends State<ExercisePage> {
           content: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 38.0),
+                padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 18.0),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: _currentStep >= totalSteps - 1
@@ -44,12 +69,13 @@ class _ExercisePageState extends State<ExercisePage> {
               DecoratedBox(
                 decoration: cardBoxDecoration(),
                 child: Padding(
-                  padding: const EdgeInsets.all(72.0),
+                  padding: const EdgeInsets.all(40.0),
                   child: Column(
                     children: <Widget>[
                       ListTile(
+                        // step number avatar
                         leading: CircleAvatar(
-                          radius: 50.0,
+                          radius: 60.0,
                           foregroundColor: kDarkBlueColor,
                           child: Text(
                             (i + 1).toString(),
@@ -62,18 +88,29 @@ class _ExercisePageState extends State<ExercisePage> {
                         ),
                         title: Text(
                           instructions[i].detail,
-                          style: kHeadLineTextStyle,
+                          style: kHeadLineTimeLineTextStyle,
                         ),
                       ),
+                      // user input/response only if 'text entry'
                       instructions[i].type == 'text entry'
                           ? Padding(
                               padding:
-                                  const EdgeInsets.fromLTRB(50.0, 50.0, 0, 0),
-                              child: TextFormField(
+                                  const EdgeInsets.fromLTRB(50.0, 20.0, 0, 0),
+                              child: new TextField(
+                                controller: myController,
                                 keyboardType: TextInputType.multiline,
                                 maxLines: null,
                                 autofocus: true,
-                                style: kHeadLineTextStyle,
+                                onChanged: (answer) {
+//                                  print(i);
+//                                  print(answer);
+                                  answers[i] = answer;
+//                                  print(answers[i]);
+//                                  print(answers.toString());
+
+//                                  return answer;
+                                },
+                                style: kInputTextStyle,
                                 decoration: InputDecoration(
                                     labelText: 'Your thoughts here...',
                                     labelStyle: kLabelTextStyle),
@@ -91,9 +128,81 @@ class _ExercisePageState extends State<ExercisePage> {
       return steps;
     }
 
+    void stepContinue() {
+      if (_currentStep < totalSteps - 1) {
+        setState(() {
+          if (myController.text.length == 0 &&
+              widget.exercise.instructions[_currentStep].type == 'text entry') {
+            showToast(
+              "Please add your thoughts to continue.",
+              position: ToastPosition.bottom,
+              backgroundColor: kDarkBlueColor,
+              radius: 13.0,
+              textStyle: TextStyle(
+                  color: Colors.white,
+                  backgroundColor: kDarkBlueColor,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 24,
+                  fontFamily: 'OpenSans'),
+              animationBuilder: Miui10AnimBuilder(),
+            );
+          } else {
+            _currentStep += 1;
+            myController.clear();
+          }
+        });
+      } else {
+        if (myController.text.length == 0 &&
+            widget.exercise.instructions[_currentStep].type == 'text entry') {
+          showToast(
+            "Please complete exercise to continue.",
+            position: ToastPosition.bottom,
+            backgroundColor: kDarkBlueColor,
+            radius: 13.0,
+            textStyle: TextStyle(
+                color: Colors.white,
+                backgroundColor: kDarkBlueColor,
+                fontWeight: FontWeight.w400,
+                fontSize: 24,
+                fontFamily: 'OpenSans'),
+            animationBuilder: Miui10AnimBuilder(),
+          );
+        } else {
+          Exercise exercise = widget.exercise;
+          brain.addAnswers(Map.from(answers));
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReviewPage(
+                exercise: exercise,
+              ),
+            ),
+          );
+        }
+      }
+    }
+
     return FractionallySizedBox(
       widthFactor: kWidthFactor,
       child: Scaffold(
+        appBar: AppBar(
+          leading: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Icon(
+                Icons.arrow_back,
+                color: kDarkGrayColor,
+              ),
+            ),
+          ),
+          title: Text(
+            'Exercise Instructions: ${widget.exercise.name}',
+            style: kHeadLineTextStyle,
+          ),
+        ),
         body: Theme(
           data: ThemeData(primaryColor: kDarkOrangeColor),
           child: StatefulBuilder(
@@ -102,15 +211,14 @@ class _ExercisePageState extends State<ExercisePage> {
               type: StepperType.horizontal,
               currentStep: _currentStep,
               onStepTapped: (int step) => setState(() => _currentStep = step),
-              onStepContinue: _currentStep < totalSteps - 1
-                  ? () => setState(() => _currentStep += 1)
-                  : null,
+              onStepContinue: stepContinue,
               onStepCancel: _currentStep > 0
                   ? () => setState(() => _currentStep -= 1)
                   : null,
               controlsBuilder: (BuildContext context,
                       {VoidCallback onStepContinue,
                       VoidCallback onStepCancel}) =>
+                  // buttons
                   Container(
                 height: 70,
                 child: Row(
@@ -140,7 +248,9 @@ class _ExercisePageState extends State<ExercisePage> {
                         _currentStep >= totalSteps - 1
                             ? Icon(Icons.done)
                             : Icon(Icons.chevron_right),
-                        _currentStep >= totalSteps ? Text("DONE") : Text("NEXT")
+                        _currentStep >= totalSteps - 1
+                            ? Text("FINALIZE")
+                            : Text("NEXT")
                       ]),
                     ),
                   ],
@@ -163,7 +273,6 @@ List<RichText> titles = [
     text: new TextSpan(
       // Note: Styles for TextSpans must be explicitly defined.
       // Child text spans will inherit styles from parent
-      style: kTitleTextStyle,
       children: <TextSpan>[
         new TextSpan(text: 'Let\'s get ', style: kTitleTextStyle),
         new TextSpan(text: 'started', style: kTitleHighlightTextStyle),
@@ -225,813 +334,22 @@ List<RichText> titles = [
       // Child text spans will inherit styles from parent
       style: kTitleTextStyle,
       children: <TextSpan>[
-        new TextSpan(text: 'Yay ', style: kTitleHighlightTextStyle),
-        new TextSpan(text: 'we\'re finished!', style: kTitleTextStyle),
+        new TextSpan(text: 'Just one ', style: kTitleTextStyle),
+        new TextSpan(text: 'final ', style: kTitleHighlightTextStyle),
+        new TextSpan(text: 'step!', style: kTitleTextStyle),
       ],
     ),
   ),
+//  new RichText(
+//    text: new TextSpan(
+//      // Note: Styles for TextSpans must be explicitly defined.
+//      // Child text spans will inherit styles from parent
+//      style: kTitleTextStyle,
+//      children: <TextSpan>[
+//        new TextSpan(text: 'Yay ', style: kTitleHighlightTextStyle),
+//        new TextSpan(text: 'we\'re finished!', style: kTitleTextStyle),
+//      ],
+//    ),
+//  ),
 ];
 int i = 0;
-
-//<Step>[
-//                Step(
-//                  title: const Text(''),
-//                  isActive: _currentStep >= 0,
-//                  state: _currentStep >= 1
-//                      ? StepState.complete
-//                      : StepState.disabled,
-//                  content: Column(
-//                    children: [
-//                      Padding(
-//                        padding: const EdgeInsets.symmetric(vertical: 38.0),
-//                        child: Align(
-//                          alignment: Alignment.centerLeft,
-//                          child: titles[i],
-//                        ),
-//                      ),
-//                      DecoratedBox(
-//                        decoration: cardBoxDecoration(),
-//                        child: Padding(
-//                          padding: const EdgeInsets.all(72.0),
-//                          child: Column(
-//                            children: <Widget>[
-//                              ListTile(
-//                                leading: CircleAvatar(
-//                                  radius: 50.0,
-//                                  foregroundColor: kDarkBlueColor,
-//                                  child: Text(
-//                                    (i + 1).toString(),
-//                                    style: TextStyle(
-//                                        color: Colors.white,
-//                                        fontSize: 48,
-//                                        fontWeight: FontWeight.w900),
-//                                  ),
-//                                  backgroundColor: kDarkBlueColor,
-//                                ),
-//                                title: Text(
-//                                  exercises[i].instructions[i].detail,
-//                                  style: kHeadLineTextStyle,
-//                                ),
-//                              ),
-//                            ],
-//                          ),
-//                        ),
-//                      ),
-//                    ],
-//                  ),
-//                ),
-//                Step(
-//                  title: const Text(''),
-//                  isActive: _currentStep >= 1,
-//                  state: _currentStep >= 2
-//                      ? StepState.complete
-//                      : StepState.disabled,
-//                  content: Column(
-//                    children: [
-//                      Padding(
-//                        padding: const EdgeInsets.symmetric(vertical: 38.0),
-//                        child: Align(
-//                          alignment: Alignment.centerLeft,
-//                          child: titles[i + 1],
-//                        ),
-//                      ),
-//                      DecoratedBox(
-//                        decoration: cardBoxDecoration(),
-//                        child: Padding(
-//                          padding: const EdgeInsets.all(72.0),
-//                          child: Column(
-//                            children: <Widget>[
-//                              ListTile(
-//                                leading: CircleAvatar(
-//                                  radius: 50.0,
-//                                  foregroundColor: kDarkBlueColor,
-//                                  child: Text(
-//                                    (i + 2).toString(),
-//                                    style: TextStyle(
-//                                        color: Colors.white,
-//                                        fontSize: 48,
-//                                        fontWeight: FontWeight.w900),
-//                                  ),
-//                                  backgroundColor: kDarkBlueColor,
-//                                ),
-//                                title: Text(
-//                                  exercises[i + 1].instructions[i + 1].detail,
-//                                  style: kHeadLineTextStyle,
-//                                ),
-//                              ),
-//                              Padding(
-//                                padding:
-//                                    const EdgeInsets.fromLTRB(50.0, 50.0, 0, 0),
-//                                child: TextFormField(
-//                                  keyboardType: TextInputType.multiline,
-//                                  maxLines: null,
-//                                  autofocus: true,
-//                                  style: kHeadLineTextStyle,
-//                                  decoration: InputDecoration(
-//                                      labelText: 'Your thoughts here...',
-//                                      labelStyle: kLabelTextStyle),
-//                                ),
-//                              )
-//                            ],
-//                          ),
-//                        ),
-//                      ),
-//                    ],
-//                  ),
-//                ),
-//                Step(
-//                  title: const Text(''),
-//                  isActive: _currentStep >= 2,
-//                  state: _currentStep >= 3
-//                      ? StepState.complete
-//                      : StepState.disabled,
-//                  content: Column(
-//                    children: [
-//                      Padding(
-//                        padding: const EdgeInsets.symmetric(vertical: 38.0),
-//                        child: Align(
-//                          alignment: Alignment.centerLeft,
-//                          child: titles[i + 2],
-//                        ),
-//                      ),
-//                      DecoratedBox(
-//                        decoration: cardBoxDecoration(),
-//                        child: Padding(
-//                          padding: const EdgeInsets.all(72.0),
-//                          child: Column(
-//                            children: <Widget>[
-//                              ListTile(
-//                                leading: CircleAvatar(
-//                                  radius: 50.0,
-//                                  foregroundColor: kDarkBlueColor,
-//                                  child: Text(
-//                                    (i + 3).toString(),
-//                                    style: TextStyle(
-//                                        color: Colors.white,
-//                                        fontSize: 48,
-//                                        fontWeight: FontWeight.w900),
-//                                  ),
-//                                  backgroundColor: kDarkBlueColor,
-//                                ),
-//                                title: Text(
-//                                  exercises[i + 2].instructions[i + 2].detail,
-//                                  style: kHeadLineTextStyle,
-//                                ),
-//                              ),
-//                              Padding(
-//                                padding:
-//                                    const EdgeInsets.fromLTRB(50.0, 50.0, 0, 0),
-//                                child: TextFormField(
-//                                  keyboardType: TextInputType.multiline,
-//                                  maxLines: null,
-//                                  autofocus: true,
-//                                  style: kHeadLineTextStyle,
-//                                  decoration: InputDecoration(
-//                                      labelText: 'Your thoughts here...',
-//                                      labelStyle: kLabelTextStyle),
-//                                ),
-//                              )
-//                            ],
-//                          ),
-//                        ),
-//                      ),
-//                    ],
-//                  ),
-//                ),
-//                Step(
-//                  title: const Text(''),
-//                  isActive: _currentStep >= 3,
-//                  state: _currentStep >= 4
-//                      ? StepState.complete
-//                      : StepState.disabled,
-//                  content: Column(
-//                    children: [
-//                      Padding(
-//                        padding: const EdgeInsets.symmetric(vertical: 38.0),
-//                        child: Align(
-//                          alignment: Alignment.centerLeft,
-//                          child: titles[i + 3],
-//                        ),
-//                      ),
-//                      DecoratedBox(
-//                        decoration: cardBoxDecoration(),
-//                        child: Padding(
-//                          padding: const EdgeInsets.all(72.0),
-//                          child: Column(
-//                            children: <Widget>[
-//                              ListTile(
-//                                leading: CircleAvatar(
-//                                  radius: 50.0,
-//                                  foregroundColor: kDarkBlueColor,
-//                                  child: Text(
-//                                    (i + 4).toString(),
-//                                    style: TextStyle(
-//                                        color: Colors.white,
-//                                        fontSize: 48,
-//                                        fontWeight: FontWeight.w900),
-//                                  ),
-//                                  backgroundColor: kDarkBlueColor,
-//                                ),
-//                                title: Text(
-//                                  exercises[i + 3].instructions[i + 3].detail,
-//                                  style: kHeadLineTextStyle,
-//                                ),
-//                              ),
-//                              Padding(
-//                                padding:
-//                                    const EdgeInsets.fromLTRB(50.0, 50.0, 0, 0),
-//                                child: TextFormField(
-//                                  keyboardType: TextInputType.multiline,
-//                                  maxLines: null,
-//                                  autofocus: true,
-//                                  style: kHeadLineTextStyle,
-//                                  decoration: InputDecoration(
-//                                      labelText: 'Your thoughts here...',
-//                                      labelStyle: kLabelTextStyle),
-//                                ),
-//                              )
-//                            ],
-//                          ),
-//                        ),
-//                      ),
-//                    ],
-//                  ),
-//                ),
-//              ],
-//  List<Step> steps = [
-//    Step(
-//      title: const Text(''),
-//      isActive: _currentStep >= 0,
-//      state: _currentStep >= 0 ? StepState.complete : StepState.disabled,
-//      content: Column(
-//        children: [
-//          Padding(
-//            padding: const EdgeInsets.symmetric(vertical: 38.0),
-//            child: Align(
-//              alignment: Alignment.centerLeft,
-//              child: titles[i],
-//            ),
-//          ),
-//          DecoratedBox(
-//            decoration: cardBoxDecoration(),
-//            child: Padding(
-//              padding: const EdgeInsets.all(72.0),
-//              child: Column(
-//                children: <Widget>[
-//                  ListTile(
-//                    leading: CircleAvatar(
-//                      radius: 50.0,
-//                      foregroundColor: kDarkBlueColor,
-//                      child: Text(
-//                        (i + 1).toString(),
-//                        style: TextStyle(
-//                            color: Colors.white,
-//                            fontSize: 48,
-//                            fontWeight: FontWeight.w900),
-//                      ),
-//                      backgroundColor: kDarkBlueColor,
-//                    ),
-//                    title: Text(
-//                      exercises[i].instructions[i].detail,
-//                      style: kHeadLineTextStyle,
-//                    ),
-//                  ),
-//                ],
-//              ),
-//            ),
-//          ),
-//        ],
-//      ),
-//    ),
-//    Step(
-//      title: const Text(''),
-//      isActive: _currentStep >= 1,
-//      state: _currentStep >= 1 ? StepState.complete : StepState.disabled,
-//      content: Column(
-//        children: [
-//          Padding(
-//            padding: const EdgeInsets.symmetric(vertical: 38.0),
-//            child: Align(
-//              alignment: Alignment.centerLeft,
-//              child: titles[i + 1],
-//            ),
-//          ),
-//          DecoratedBox(
-//            decoration: cardBoxDecoration(),
-//            child: Padding(
-//              padding: const EdgeInsets.all(72.0),
-//              child: Column(
-//                children: <Widget>[
-//                  ListTile(
-//                    leading: CircleAvatar(
-//                      radius: 50.0,
-//                      foregroundColor: kDarkBlueColor,
-//                      child: Text(
-//                        (i + 2).toString(),
-//                        style: TextStyle(
-//                            color: Colors.white,
-//                            fontSize: 48,
-//                            fontWeight: FontWeight.w900),
-//                      ),
-//                      backgroundColor: kDarkBlueColor,
-//                    ),
-//                    title: Text(
-//                      exercises[i + 1].instructions[i + 1].detail,
-//                      style: kHeadLineTextStyle,
-//                    ),
-//                  ),
-//                  Padding(
-//                    padding: const EdgeInsets.fromLTRB(50.0, 50.0, 0, 0),
-//                    child: TextFormField(
-//                      keyboardType: TextInputType.multiline,
-//                      maxLines: null,
-//                      autofocus: true,
-//                      style: kHeadLineTextStyle,
-//                      decoration: InputDecoration(
-//                          labelText: 'Your thoughts here...',
-//                          labelStyle: kLabelTextStyle),
-//                    ),
-//                  )
-//                ],
-//              ),
-//            ),
-//          ),
-//        ],
-//      ),
-//    ),
-//    Step(
-//      title: const Text(''),
-//      isActive: _currentStep >= 2,
-//      state: _currentStep >= 2 ? StepState.complete : StepState.disabled,
-//      content: Column(
-//        children: [
-//          Padding(
-//            padding: const EdgeInsets.symmetric(vertical: 38.0),
-//            child: Align(
-//              alignment: Alignment.centerLeft,
-//              child: titles[i + 2],
-//            ),
-//          ),
-//          DecoratedBox(
-//            decoration: cardBoxDecoration(),
-//            child: Padding(
-//              padding: const EdgeInsets.all(72.0),
-//              child: Column(
-//                children: <Widget>[
-//                  ListTile(
-//                    leading: CircleAvatar(
-//                      radius: 50.0,
-//                      foregroundColor: kDarkBlueColor,
-//                      child: Text(
-//                        (i + 3).toString(),
-//                        style: TextStyle(
-//                            color: Colors.white,
-//                            fontSize: 48,
-//                            fontWeight: FontWeight.w900),
-//                      ),
-//                      backgroundColor: kDarkBlueColor,
-//                    ),
-//                    title: Text(
-//                      exercises[i + 2].instructions[i + 2].detail,
-//                      style: kHeadLineTextStyle,
-//                    ),
-//                  ),
-//                  Padding(
-//                    padding: const EdgeInsets.fromLTRB(50.0, 50.0, 0, 0),
-//                    child: TextFormField(
-//                      keyboardType: TextInputType.multiline,
-//                      maxLines: null,
-//                      autofocus: true,
-//                      style: kHeadLineTextStyle,
-//                      decoration: InputDecoration(
-//                          labelText: 'Your thoughts here...',
-//                          labelStyle: kLabelTextStyle),
-//                    ),
-//                  )
-//                ],
-//              ),
-//            ),
-//          ),
-//        ],
-//      ),
-//    ),
-//    Step(
-//      title: const Text(''),
-//      isActive: _currentStep >= 3,
-//      state: _currentStep >= 3 ? StepState.complete : StepState.disabled,
-//      content: Column(
-//        children: [
-//          Padding(
-//            padding: const EdgeInsets.symmetric(vertical: 38.0),
-//            child: Align(
-//              alignment: Alignment.centerLeft,
-//              child: titles[i + 3],
-//            ),
-//          ),
-//          DecoratedBox(
-//            decoration: cardBoxDecoration(),
-//            child: Padding(
-//              padding: const EdgeInsets.all(72.0),
-//              child: Column(
-//                children: <Widget>[
-//                  ListTile(
-//                    leading: CircleAvatar(
-//                      radius: 50.0,
-//                      foregroundColor: kDarkBlueColor,
-//                      child: Text(
-//                        (i + 4).toString(),
-//                        style: TextStyle(
-//                            color: Colors.white,
-//                            fontSize: 48,
-//                            fontWeight: FontWeight.w900),
-//                      ),
-//                      backgroundColor: kDarkBlueColor,
-//                    ),
-//                    title: Text(
-//                      exercises[i + 3].instructions[i + 3].detail,
-//                      style: kHeadLineTextStyle,
-//                    ),
-//                  ),
-//                  Padding(
-//                    padding: const EdgeInsets.fromLTRB(50.0, 50.0, 0, 0),
-//                    child: TextFormField(
-//                      keyboardType: TextInputType.multiline,
-//                      maxLines: null,
-//                      autofocus: true,
-//                      style: kHeadLineTextStyle,
-//                      decoration: InputDecoration(
-//                          labelText: 'Your thoughts here...',
-//                          labelStyle: kLabelTextStyle),
-//                    ),
-//                  )
-//                ],
-//              ),
-//            ),
-//          ),
-//        ],
-//      ),
-//    ),
-//  ];
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return new Scaffold(
-//      appBar: AppBar(
-//        title: Text('Create an account'),
-//      ),
-//      body: Center(
-//        child: FractionallySizedBox(
-//          widthFactor: kWidthFactor,
-//          child: Column(
-//            children: <Widget>[
-//              complete
-//                  ? Expanded(
-//                      child: Center(
-//                        child: AlertDialog(
-//                          title: new Text("Profile Created"),
-//                          content: new Text(
-//                            "Tada!",
-//                          ),
-//                          actions: <Widget>[
-//                            new FlatButton(
-//                              child: new Text("Close"),
-//                              onPressed: () {
-//                                setState(() => complete = false);
-//                              },
-//                            ),
-//                          ],
-//                        ),
-//                      ),
-//                    )
-//                  : Expanded(
-//                      child: Theme(
-//                          data: ThemeData.light(),
-//                          child: StatefulBuilder(
-//                            builder:
-//                                (BuildContext context, StateSetter setter) {
-//                              return Stepper(
-//                                type: stepperType,
-//                                currentStep: currentStep,
-//                                onStepContinue: next,
-//                                onStepTapped: (step) => goTo(step),
-//                                onStepCancel: cancel,
-//                                steps: <Step>[
-//                                  Step(
-//                                    title: const Text(''),
-//                                    isActive: currentStep >= 0,
-//                                    state: currentStep >= 0
-//                                        ? StepState.complete
-//                                        : StepState.disabled,
-//                                    content: Column(
-//                                      children: [
-//                                        Padding(
-//                                          padding: const EdgeInsets.symmetric(
-//                                              vertical: 38.0),
-//                                          child: Align(
-//                                            alignment: Alignment.centerLeft,
-//                                            child: titles[i],
-//                                          ),
-//                                        ),
-//                                        DecoratedBox(
-//                                          decoration: cardBoxDecoration(),
-//                                          child: Padding(
-//                                            padding: const EdgeInsets.all(72.0),
-//                                            child: Column(
-//                                              children: <Widget>[
-//                                                ListTile(
-//                                                  leading: CircleAvatar(
-//                                                    radius: 50.0,
-//                                                    foregroundColor:
-//                                                        kDarkBlueColor,
-//                                                    child: Text(
-//                                                      (i + 1).toString(),
-//                                                      style: TextStyle(
-//                                                          color: Colors.white,
-//                                                          fontSize: 48,
-//                                                          fontWeight:
-//                                                              FontWeight.w900),
-//                                                    ),
-//                                                    backgroundColor:
-//                                                        kDarkBlueColor,
-//                                                  ),
-//                                                  title: Text(
-//                                                    exercises[i]
-//                                                        .instructions[i]
-//                                                        .detail,
-//                                                    style: kHeadLineTextStyle,
-//                                                  ),
-//                                                ),
-//                                              ],
-//                                            ),
-//                                          ),
-//                                        ),
-//                                      ],
-//                                    ),
-//                                  ),
-//                                  Step(
-//                                    title: const Text(''),
-//                                    isActive: currentStep >= 1,
-//                                    state: currentStep >= 2
-//                                        ? StepState.complete
-//                                        : StepState.disabled,
-//                                    content: Column(
-//                                      children: [
-//                                        Padding(
-//                                          padding: const EdgeInsets.symmetric(
-//                                              vertical: 38.0),
-//                                          child: Align(
-//                                            alignment: Alignment.centerLeft,
-//                                            child: titles[i + 1],
-//                                          ),
-//                                        ),
-//                                        DecoratedBox(
-//                                          decoration: cardBoxDecoration(),
-//                                          child: Padding(
-//                                            padding: const EdgeInsets.all(72.0),
-//                                            child: Column(
-//                                              children: <Widget>[
-//                                                ListTile(
-//                                                  leading: CircleAvatar(
-//                                                    radius: 50.0,
-//                                                    foregroundColor:
-//                                                        kDarkBlueColor,
-//                                                    child: Text(
-//                                                      (i + 2).toString(),
-//                                                      style: TextStyle(
-//                                                          color: Colors.white,
-//                                                          fontSize: 48,
-//                                                          fontWeight:
-//                                                              FontWeight.w900),
-//                                                    ),
-//                                                    backgroundColor:
-//                                                        kDarkBlueColor,
-//                                                  ),
-//                                                  title: Text(
-//                                                    exercises[i + 1]
-//                                                        .instructions[i + 1]
-//                                                        .detail,
-//                                                    style: kHeadLineTextStyle,
-//                                                  ),
-//                                                ),
-//                                                Padding(
-//                                                  padding:
-//                                                      const EdgeInsets.fromLTRB(
-//                                                          50.0, 50.0, 0, 0),
-//                                                  child: TextFormField(
-//                                                    keyboardType:
-//                                                        TextInputType.multiline,
-//                                                    maxLines: null,
-//                                                    autofocus: true,
-//                                                    style: kHeadLineTextStyle,
-//                                                    decoration: InputDecoration(
-//                                                        labelText:
-//                                                            'Your thoughts here...',
-//                                                        labelStyle:
-//                                                            kLabelTextStyle),
-//                                                  ),
-//                                                )
-//                                              ],
-//                                            ),
-//                                          ),
-//                                        ),
-//                                      ],
-//                                    ),
-//                                  ),
-//                                  Step(
-//                                    title: const Text(''),
-//                                    isActive: activeStates[2],
-//                                    state: stepStates[2],
-//                                    content: Column(
-//                                      children: [
-//                                        Padding(
-//                                          padding: const EdgeInsets.symmetric(
-//                                              vertical: 38.0),
-//                                          child: Align(
-//                                            alignment: Alignment.centerLeft,
-//                                            child: titles[i + 2],
-//                                          ),
-//                                        ),
-//                                        DecoratedBox(
-//                                          decoration: cardBoxDecoration(),
-//                                          child: Padding(
-//                                            padding: const EdgeInsets.all(72.0),
-//                                            child: Column(
-//                                              children: <Widget>[
-//                                                ListTile(
-//                                                  leading: CircleAvatar(
-//                                                    radius: 50.0,
-//                                                    foregroundColor:
-//                                                        kDarkBlueColor,
-//                                                    child: Text(
-//                                                      (i + 3).toString(),
-//                                                      style: TextStyle(
-//                                                          color: Colors.white,
-//                                                          fontSize: 48,
-//                                                          fontWeight:
-//                                                              FontWeight.w900),
-//                                                    ),
-//                                                    backgroundColor:
-//                                                        kDarkBlueColor,
-//                                                  ),
-//                                                  title: Text(
-//                                                    exercises[i + 2]
-//                                                        .instructions[i + 2]
-//                                                        .detail,
-//                                                    style: kHeadLineTextStyle,
-//                                                  ),
-//                                                ),
-//                                                Padding(
-//                                                  padding:
-//                                                      const EdgeInsets.fromLTRB(
-//                                                          50.0, 50.0, 0, 0),
-//                                                  child: TextFormField(
-//                                                    keyboardType:
-//                                                        TextInputType.multiline,
-//                                                    maxLines: null,
-//                                                    autofocus: true,
-//                                                    style: kHeadLineTextStyle,
-//                                                    decoration: InputDecoration(
-//                                                        labelText:
-//                                                            'Your thoughts here...',
-//                                                        labelStyle:
-//                                                            kLabelTextStyle),
-//                                                  ),
-//                                                )
-//                                              ],
-//                                            ),
-//                                          ),
-//                                        ),
-//                                      ],
-//                                    ),
-//                                  ),
-//                                  Step(
-//                                    title: const Text(''),
-//                                    isActive: activeStates[3],
-//                                    state: stepStates[3],
-//                                    content: Column(
-//                                      children: [
-//                                        Padding(
-//                                          padding: const EdgeInsets.symmetric(
-//                                              vertical: 38.0),
-//                                          child: Align(
-//                                            alignment: Alignment.centerLeft,
-//                                            child: titles[i + 3],
-//                                          ),
-//                                        ),
-//                                        DecoratedBox(
-//                                          decoration: cardBoxDecoration(),
-//                                          child: Padding(
-//                                            padding: const EdgeInsets.all(72.0),
-//                                            child: Column(
-//                                              children: <Widget>[
-//                                                ListTile(
-//                                                  leading: CircleAvatar(
-//                                                    radius: 50.0,
-//                                                    foregroundColor:
-//                                                        kDarkBlueColor,
-//                                                    child: Text(
-//                                                      (i + 4).toString(),
-//                                                      style: TextStyle(
-//                                                          color: Colors.white,
-//                                                          fontSize: 48,
-//                                                          fontWeight:
-//                                                              FontWeight.w900),
-//                                                    ),
-//                                                    backgroundColor:
-//                                                        kDarkBlueColor,
-//                                                  ),
-//                                                  title: Text(
-//                                                    exercises[i + 3]
-//                                                        .instructions[i + 3]
-//                                                        .detail,
-//                                                    style: kHeadLineTextStyle,
-//                                                  ),
-//                                                ),
-//                                                Padding(
-//                                                  padding:
-//                                                      const EdgeInsets.fromLTRB(
-//                                                          50.0, 50.0, 0, 0),
-//                                                  child: TextFormField(
-//                                                    keyboardType:
-//                                                        TextInputType.multiline,
-//                                                    maxLines: null,
-//                                                    autofocus: true,
-//                                                    style: kHeadLineTextStyle,
-//                                                    decoration: InputDecoration(
-//                                                        labelText:
-//                                                            'Your thoughts here...',
-//                                                        labelStyle:
-//                                                            kLabelTextStyle),
-//                                                  ),
-//                                                )
-//                                              ],
-//                                            ),
-//                                          ),
-//                                        ),
-//                                      ],
-//                                    ),
-//                                  ),
-//                                ],
-//                              );
-//                            },
-//                          )),
-//                    ),
-//            ],
-//          ),
-//        ),
-//      ),
-//      floatingActionButton: FloatingActionButton(
-//        child: Icon(
-//          Icons.list,
-//        ),
-//        onPressed: switchStepType,
-//      ),
-//    );
-//  }
-//
-//  next() {
-//    if (currentStep + 1 != steps.length) {
-//      goTo(currentStep + 1);
-//    } else {
-//      setState(() {
-//        i += 1;
-//        complete = true;
-//        print("currentStep = $currentStep  i = $i");
-//        for (int i = 0; i < activeStates.length; i++) {
-//          activeStates[i] = currentStep == i;
-//        }
-//        stepStates[i] =
-//            currentStep >= i ? StepState.complete : StepState.indexed;
-//      });
-//    }
-//  }
-//
-//  cancel() {
-//    if (currentStep > 0) {
-//      setState(() {
-//        i -= 1;
-//      });
-//      goTo(currentStep - 1);
-//    }
-//  }
-//
-//  goTo(int step) {
-//    setState(() {
-//      i = step;
-//      currentStep = step;
-//      print("currentStep = $currentStep  i = $i");
-//      for (int i = 0; i < activeStates.length; i++) {
-//        activeStates[i] = currentStep == i;
-//      }
-//      stepStates[i] = currentStep >= i ? StepState.complete : StepState.indexed;
-//    });
-//  }
-//
-//  StepperType stepperType = StepperType.horizontal;
-//
-//  switchStepType() {
-//    setState(() => stepperType == StepperType.horizontal
-//        ? stepperType = StepperType.vertical
-//        : stepperType = StepperType.horizontal);
-//  }
-//}
