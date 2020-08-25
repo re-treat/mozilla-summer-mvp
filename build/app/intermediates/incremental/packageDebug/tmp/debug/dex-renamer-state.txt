@@ -1,4 +1,0 @@
-#Sat Aug 01 10:10:43 ICT 2020
-base.0=/Users/haophan/Development/flutter_projects/re_treat_app/build/app/intermediates/dex/debug/mergeDexDebug/out/classes.dex
-path.0=classes.dex
-renamed.0=classes.dex
