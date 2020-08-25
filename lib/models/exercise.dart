@@ -1,4 +1,5 @@
 class Exercise {
+  String id;
   String name;
   String image;
   List<String> labelsTargetEmotion;
@@ -8,7 +9,8 @@ class Exercise {
   List<String> whyItWorks;
 
   Exercise(
-      {this.name,
+      {this.id,
+      this.name,
       this.image,
       this.labelsTargetEmotion,
       this.labelsCauseOfEmotion,

@@ -7,6 +7,7 @@ import 'package:retreatapp/components/desired_emotion_filter.dart';
 import 'package:retreatapp/components/emotion_filter.dart';
 import 'package:retreatapp/constants.dart';
 import 'package:retreatapp/screens/results_page.dart';
+import 'package:retreatapp/components/httpUtil.dart' as httpUtil;
 
 import '../models/brain.dart';
 import '../models/exercise.dart';
@@ -18,6 +19,13 @@ class InputPage extends StatefulWidget {
 
 class _InputPageState extends State<InputPage> {
   Color answerTextColor = kInactiveCardColour;
+
+  EmotionFilter filter_q1;
+  DesiredEmotionFilter filter_q2;
+  CauseOfEmotionFilter filter_q3;
+
+  _InputPageState(){
+  }
 
   final questions = [
     'What emotion(s) are you feeling right now?',
@@ -172,33 +180,32 @@ class _InputPageState extends State<InputPage> {
                         icon: Icon(Icons.arrow_forward_ios),
                         backgroundColor: kDarkBlueColor,
                         onPressed: () {
-                          final Set<Exercise> recommendedExercises =
-                              Provider.of<Brain>(context, listen: false)
-                                  .getRecommendExercises();
-
-                          if (recommendedExercises.length > 0) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ResultsPage(),
+                          Provider.of<Brain>(context, listen: false)
+                              .getRecommendExercises().then( (recommendedExercises) => {
+                              if (recommendedExercises.length > 0) {
+                                Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ResultsPage(),
+                                ),
                               ),
-                            );
-                          } else {
-                            print('no exercises selected');
-                            showToast(
-                              "Please make a selection to continue.",
-                              position: ToastPosition.bottom,
-                              backgroundColor: kDarkBlueColor,
-                              radius: 13.0,
-                              textStyle: TextStyle(
-                                  color: Colors.white,
-                                  backgroundColor: kDarkBlueColor,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 24,
-                                  fontFamily: 'OpenSans'),
-                              animationBuilder: Miui10AnimBuilder(),
-                            );
-                          }
+                              } else {
+                                print('no exercises selected'),
+                                showToast(
+                                "Please make a selection to continue.",
+                                position: ToastPosition.bottom,
+                                backgroundColor: kDarkBlueColor,
+                                radius: 13.0,
+                                textStyle: TextStyle(
+                                color: Colors.white,
+                                backgroundColor: kDarkBlueColor,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 24,
+                                fontFamily: 'OpenSans'),
+                                animationBuilder: Miui10AnimBuilder(),
+                                ),
+                              }
+                          });
                         },
                       ),
                     ],

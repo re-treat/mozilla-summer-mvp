@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:retreatapp/constants.dart';
+import 'package:retreatapp/components/httpUtil.dart' as httpUtil;
 
 import '../models/brain.dart';
 import '../models/exercise.dart';
@@ -13,23 +14,31 @@ class DesiredEmotionFilter extends StatefulWidget {
   final Brain brain;
   DesiredEmotionFilter({this.brain});
 
+  DesiredEmotionFilterState state;
+
   @override
-  State createState() => DesiredEmotionFilterState();
+  State createState() => state = DesiredEmotionFilterState();
+
+  List<String> get selectedFilters {
+    return state.selectedFilters;
+  }
 }
 
 class DesiredEmotionFilterState extends State<DesiredEmotionFilter> {
   Set<Exercise> recommendedExercises = Set<Exercise>();
-
-  final List<DesiredEmotionFilterEntry> _emotion = <DesiredEmotionFilterEntry>[
-    const DesiredEmotionFilterEntry('confident'),
-    const DesiredEmotionFilterEntry('motivated'),
-    const DesiredEmotionFilterEntry('relaxed'),
-    const DesiredEmotionFilterEntry('relieved'),
-    const DesiredEmotionFilterEntry('thankful'),
-  ];
   List<String> _filters = <String>[];
 
-  Iterable<Widget> get emotionWidgets sync* {
+  List<String> get selectedFilters {
+    return _filters;
+  }
+
+  Stream<Widget> get emotionWidgets async* {
+    List<DesiredEmotionFilterEntry> _emotion = <DesiredEmotionFilterEntry>[];
+    await httpUtil.getLabels("q3").then((labels) => {
+      labels.forEach((label) => {
+        _emotion.add(DesiredEmotionFilterEntry(label)),
+      }),
+    });
     for (final DesiredEmotionFilterEntry emotion in _emotion) {
       yield Padding(
         padding: const EdgeInsets.all(4.0),
@@ -67,32 +76,34 @@ class DesiredEmotionFilterState extends State<DesiredEmotionFilter> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Wrap(
-          spacing: kSpacing,
-          runSpacing: kRunSpacing,
-          children: emotionWidgets.toList(),
-        ),
-//        Text('Look for: ${_filters.join(', ')}'),
-//        Text('Total matches: ${getRecommendExercises().length}'),
-//        Text(
-//            'Look for: ${getRecommendExercises().map((e) => e.name).toString()}'),
-        //  Text('Look for: ${_filters.join(', ')}'),
-      ],
+    return FutureBuilder<List<Widget>>(
+      future: emotionWidgets.toList(),
+      builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot){
+        if(snapshot.hasData){
+          return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget> [
+                Wrap(
+                  spacing:  kSpacing,
+                  runSpacing: kRunSpacing,
+                  children: snapshot.data,
+                )
+              ]
+          );
+        }
+        else if(snapshot.hasError){
+          return Text(
+            'Error loading labels.',
+            textAlign: TextAlign.center,
+          );
+        }
+        else{
+          return Text(
+            'Loading labels...',
+            textAlign: TextAlign.center,
+          );
+        }
+      },
     );
-  }
-
-  Set<Exercise> getRecommendExercises() {
-//    List<Exercise> recommendedExercises = [];
-    exercises.forEach((exercise) {
-      if (Set.of(_filters)
-          .intersection(Set.of(exercise.labelsEffectAndGoal))
-          .isNotEmpty) {
-        recommendedExercises.add(exercise);
-      }
-    });
-    return recommendedExercises;
   }
 }

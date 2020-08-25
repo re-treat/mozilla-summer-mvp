@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:retreatapp/models/exercise.dart';
+import 'package:retreatapp/components/httpUtil.dart' as httpUtil;
 
 import '../constants.dart';
 
@@ -38,27 +39,21 @@ class Brain extends ChangeNotifier {
     desiredEmotions = Set<String>();
   }
 
-  Set<Exercise> getRecommendExercises() {
-    Set<Exercise> recommendedExercises = Set<Exercise>();
+  Future<List<Exercise>> getRecommendExercises() async {
+    List<String> labels_q1 = List<String>();
+    labels_q1.addAll(currentEmotions);
+    List<String> labels_q2 = List<String>();
+    labels_q2.addAll(causesOfEmotion);
+    List<String> labels_q3 = List<String>();
+    labels_q3.addAll(desiredEmotions);
+    List<Exercise> result = List<Exercise>();
 
-    exercises.forEach((exercise) {
-      if (currentEmotions
-          .intersection(Set.of(exercise.labelsTargetEmotion))
-          .isNotEmpty) {
-        recommendedExercises.add(exercise);
-      }
-      if (causesOfEmotion
-          .intersection(Set.of(exercise.labelsCauseOfEmotion))
-          .isNotEmpty) {
-        recommendedExercises.add(exercise);
-      }
-      if (desiredEmotions
-          .intersection(Set.of(exercise.labelsEffectAndGoal))
-          .isNotEmpty) {
-        recommendedExercises.add(exercise);
-      }
+    await httpUtil.matchExercise(labels_q1, labels_q2, labels_q3, 5).then((exList) => {
+      exList.forEach((ex) {
+        result.add(exercises[ex]);
+      })
     });
-    return recommendedExercises;
+    return result;
   }
 
   UnmodifiableMapView<int, String> get answers {

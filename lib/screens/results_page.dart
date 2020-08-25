@@ -97,62 +97,79 @@ final title = RichText(
 );
 
 class ResultsPage extends StatelessWidget {
+  @required
   @override
   Widget build(BuildContext context) {
-    final List<Exercise> recommendedExercises =
-        Provider.of<Brain>(context, listen: false)
-            .getRecommendExercises()
-            .toList();
+    return FutureBuilder<List<Exercise>>(
+      future: Provider.of<Brain>(context, listen: false).getRecommendExercises(),
+      builder: (BuildContext context, AsyncSnapshot<List<Exercise>> snapshot){
+        if(snapshot.hasData){
+          List<Exercise> recommendedExercises = snapshot.data;
+          final int _kItemCount = recommendedExercises.length;
+          List<IntSize> _sizes;
+          _sizes = _createSizes(_kItemCount).toList();
 
-    final int _kItemCount = recommendedExercises.length;
-    List<IntSize> _sizes;
-    _sizes = _createSizes(_kItemCount).toList();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: title,
-        centerTitle: false,
-        titleSpacing:
-            (MediaQuery.of(context).size.width * (1 - kWidthFactor)) / 2.5,
-        toolbarHeight: 120.0,
-        elevation: 0.0,
-      ),
-      body: Center(
-        child: FractionallySizedBox(
-          widthFactor: kWidthFactor,
-          child: Column(
-            children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height - 188.0,
-                child: StaggeredGridView.countBuilder(
-                  primary: false,
-                  crossAxisCount: 4,
-                  mainAxisSpacing: 4.0,
-                  crossAxisSpacing: 4.0,
-                  itemBuilder: (context, index) => new _Tile(
-                      index, _sizes[index], recommendedExercises[index]),
-                  staggeredTileBuilder: (index) => new StaggeredTile.fit(2),
-                  itemCount: recommendedExercises.length,
+          return Scaffold(
+            appBar: AppBar(
+              title: title,
+              centerTitle: false,
+              titleSpacing:
+              (MediaQuery.of(context).size.width * (1 - kWidthFactor)) / 2.5,
+              toolbarHeight: 120.0,
+              elevation: 0.0,
+            ),
+            body: Center(
+              child: FractionallySizedBox(
+                widthFactor: kWidthFactor,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height - 188.0,
+                      child: StaggeredGridView.countBuilder(
+                        primary: false,
+                        crossAxisCount: 4,
+                        mainAxisSpacing: 4.0,
+                        crossAxisSpacing: 4.0,
+                        itemBuilder: (context, index) => new _Tile(
+                            index, _sizes[index], recommendedExercises[index]),
+                        staggeredTileBuilder: (index) => new StaggeredTile.fit(2),
+                        itemCount: recommendedExercises.length,
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: FloatingActionButton.extended(
+                        isExtended: true,
+                        label: Text('Back'),
+                        icon: Icon(Icons.arrow_back_ios),
+                        backgroundColor: kDarkBlueColor,
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: FloatingActionButton.extended(
-                  isExtended: true,
-                  label: Text('Back'),
-                  icon: Icon(Icons.arrow_back_ios),
-                  backgroundColor: kDarkBlueColor,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+            ),
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          );
+        }
+        else if(snapshot.hasError){
+          return Text(
+            'Error loading labels.',
+            textAlign: TextAlign.center,
+          );
+        }
+        else{
+          return Text(
+            'Loading labels...',
+            textAlign: TextAlign.center,
+          );
+        }
+      }
     );
+
   }
 }
 

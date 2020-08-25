@@ -451,18 +451,18 @@ class ReviewPage extends StatelessWidget {
                                 BorderRadius.all(Radius.circular(8.0))),
                         color: Colors.white,
                         onPressed: () {
-                          final Set<Exercise> recommendedExercises =
-                              Provider.of<Brain>(context, listen: false)
-                                  .getRecommendExercises();
-                          recommendedExercises.forEach((element) {
-                            print(element.name);
+                          Provider.of<Brain>(context, listen: false)
+                                  .getRecommendExercises().then( (recommendedExercises) => {
+                                  recommendedExercises.forEach((element) {
+                                  print(element.name);
+                                  }),
+                                  Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => InputPage(),
+                                  ),
+                              ),
                           });
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => InputPage(),
-                            ),
-                          );
                         },
                       ),
                     ),
@@ -476,7 +476,7 @@ class ReviewPage extends StatelessWidget {
                       alignment: Alignment.centerRight,
                       child: RaisedButton(
                         child: Text(
-                          'Share Anonymously',
+                          'Share Anonymously(coming soon)',
                           style: kBody2TextStyle,
                         ),
                         shape: RoundedRectangleBorder(
