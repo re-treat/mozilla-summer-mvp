@@ -157,13 +157,13 @@ class ResultsPage extends StatelessWidget {
         }
         else if(snapshot.hasError){
           return Text(
-            'Error loading labels.',
+            'Error loading exercises.',
             textAlign: TextAlign.center,
           );
         }
         else{
           return Text(
-            'Loading labels...',
+            'Loading...',
             textAlign: TextAlign.center,
           );
         }

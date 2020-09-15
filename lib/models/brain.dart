@@ -46,13 +46,21 @@ class Brain extends ChangeNotifier {
     labels_q2.addAll(causesOfEmotion);
     List<String> labels_q3 = List<String>();
     labels_q3.addAll(desiredEmotions);
-    List<Exercise> result = List<Exercise>();
 
-    await httpUtil.matchExercise(labels_q1, labels_q2, labels_q3, 5).then((exList) => {
-      exList.forEach((ex) {
-        result.add(exercises[ex]);
-      })
+    List<String> idList = List<String>();
+    await httpUtil.matchExercise(labels_q1, labels_q2, labels_q3, 5).then((IDs){
+      IDs.forEach((id) {
+        idList.add(id);
+      });
     });
+    List<Exercise> result = List<Exercise>();
+    for(var i=0; i<idList.length; i++){
+      await httpUtil.getExercise(idList[i]).then((exercise) {
+        if(exercise != null) {
+          result.add(exercise);
+        }
+      });
+    }
     return result;
   }
 

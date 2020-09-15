@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:retreatapp/components/card_box_decoration.dart';
 import 'package:retreatapp/constants.dart';
-import 'package:retreatapp/exercise.dart';
+import 'package:retreatapp/models/exercise.dart';
 
 class ExercisePreview extends StatefulWidget {
   final Exercise exercise;

@@ -7,10 +7,8 @@ import 'package:retreatapp/components/desired_emotion_filter.dart';
 import 'package:retreatapp/components/emotion_filter.dart';
 import 'package:retreatapp/constants.dart';
 import 'package:retreatapp/screens/results_page.dart';
-import 'package:retreatapp/components/httpUtil.dart' as httpUtil;
 
 import '../models/brain.dart';
-import '../models/exercise.dart';
 
 class InputPage extends StatefulWidget {
   @override
@@ -20,11 +18,13 @@ class InputPage extends StatefulWidget {
 class _InputPageState extends State<InputPage> {
   Color answerTextColor = kInactiveCardColour;
 
+
   EmotionFilter filter_q1;
   DesiredEmotionFilter filter_q2;
   CauseOfEmotionFilter filter_q3;
 
-  _InputPageState(){
+
+  _InputPageState() {
   }
 
   final questions = [
@@ -55,189 +55,181 @@ class _InputPageState extends State<InputPage> {
 //        toolbarHeight: 120.0,
 //        centerTitle: false,
 //      ),
-      body: Center(child: Consumer<Brain>(
-        builder: (context, brain, child) {
-          return ListView(
-            children: [
-              // Header
-              FractionallySizedBox(
-                widthFactor: kWidthFactor,
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(0.0, 30.0, 60.0, 15.0),
-                  child: title,
-                ),
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              // Question 1
-              FractionallySizedBox(
-                widthFactor: kWidthFactor,
-                child: DecoratedBox(
-                  decoration: cardBoxDecoration(),
-                  child: Padding(
-                    padding: inputCardPadding,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        ListTile(
-                          title: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10.0),
-                            child: Text(
-                              questions[0],
-                              style: kHeadLineTextStyle,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                          child: new EmotionFilter(brain: brain),
-                        ),
-                      ],
+        body: Center(child: Consumer<Brain>(
+            builder: (context, brain, child) {
+              return ListView(
+                  children: [
+                    // Header
+                    FractionallySizedBox(
+                      widthFactor: kWidthFactor,
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(0.0, 30.0, 60.0, 15.0),
+                        child: title,
+                      ),
                     ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              // Question 2
-              FractionallySizedBox(
-                widthFactor: kWidthFactor,
-                child: DecoratedBox(
-                  decoration: cardBoxDecoration(),
-                  child: Padding(
-                    padding: inputCardPadding,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        ListTile(
-                          title: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10.0),
-                            child: Text(
-                              questions[1],
-                              style: kHeadLineTextStyle,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                          child: new CauseOfEmotionFilter(brain: brain),
-                        ),
-                      ],
+                    SizedBox(
+                      height: 10.0,
                     ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              // Question 3
-              FractionallySizedBox(
-                widthFactor: kWidthFactor,
-                child: DecoratedBox(
-                  decoration: cardBoxDecoration(),
-                  child: Padding(
-                    padding: inputCardPadding,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        ListTile(
-                          title: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10.0),
-                            child: Text(
-                              questions[2],
-                              style: kHeadLineTextStyle,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                          child: new DesiredEmotionFilter(brain: brain),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              // bottom buttons
-              FractionallySizedBox(
-                widthFactor: kWidthFactor,
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    textDirection: TextDirection.rtl,
-                    children: <Widget>[
-                      FloatingActionButton.extended(
-                        label: Text('Next'),
-                        icon: Icon(Icons.arrow_forward_ios),
-                        backgroundColor: kDarkBlueColor,
-                        onPressed: () {
-                          Provider.of<Brain>(context, listen: false)
-                              .getRecommendExercises().then( (recommendedExercises) => {
-                              if (recommendedExercises.length > 0) {
-                                Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ResultsPage(),
+                    // Question 1
+                    FractionallySizedBox(
+                      widthFactor: kWidthFactor,
+                      child: DecoratedBox(
+                        decoration: cardBoxDecoration(),
+                        child: Padding(
+                          padding: inputCardPadding,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              ListTile(
+                                title: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10.0),
+                                  child: Text(
+                                    questions[0],
+                                    style: kHeadLineTextStyle,
+                                  ),
                                 ),
                               ),
-                              } else {
-                                print('no exercises selected'),
-                                showToast(
-                                "Please make a selection to continue.",
-                                position: ToastPosition.bottom,
-                                backgroundColor: kDarkBlueColor,
-                                radius: 13.0,
-                                textStyle: TextStyle(
-                                color: Colors.white,
-                                backgroundColor: kDarkBlueColor,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 24,
-                                fontFamily: 'OpenSans'),
-                                animationBuilder: Miui10AnimBuilder(),
-                                ),
-                              }
-                          });
-                        },
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 14.0),
+                                child: new EmotionFilter(brain: brain),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      )),
-
-//      floatingActionButton: FloatingActionButton.extended(
-//        label: Text('Next'),
-//        icon: Icon(Icons.arrow_forward_ios),
-//        backgroundColor: kDarkBlueColor,
-//        onPressed: () {
-//          final Set<Exercise> recommendedExercises =
-//              Provider.of<Brain>(context, listen: false)
-//                  .getRecommendExercises();
-//          recommendedExercises.forEach((element) {
-//            print(element.name);
-//          });
-//          Navigator.push(
-//            context,
-//            MaterialPageRoute(
-//              builder: (context) => ResultsPage(
-//                recommendedExercises: <Exercise>{},
-//              ),
-//            ),
-//          );
-//        },
-//      ),
+                    ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    // Question 2
+                    FractionallySizedBox(
+                      widthFactor: kWidthFactor,
+                      child: DecoratedBox(
+                        decoration: cardBoxDecoration(),
+                        child: Padding(
+                          padding: inputCardPadding,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              ListTile(
+                                title: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10.0),
+                                  child: Text(
+                                    questions[1],
+                                    style: kHeadLineTextStyle,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 14.0),
+                                child: new CauseOfEmotionFilter(brain: brain),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    // Question 3
+                    FractionallySizedBox(
+                      widthFactor: kWidthFactor,
+                      child: DecoratedBox(
+                        decoration: cardBoxDecoration(),
+                        child: Padding(
+                          padding: inputCardPadding,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              ListTile(
+                                title: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10.0),
+                                  child: Text(
+                                    questions[2],
+                                    style: kHeadLineTextStyle,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 14.0),
+                                child: new DesiredEmotionFilter(brain: brain),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    // bottom buttons
+                    FractionallySizedBox(
+                        widthFactor: kWidthFactor,
+                        child: Container(
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                textDirection: TextDirection.rtl,
+                                children: <Widget>[
+                                  FloatingActionButton.extended(
+                                      label: Text('Next'),
+                                      icon: Icon(Icons.arrow_forward_ios),
+                                      backgroundColor: kDarkBlueColor,
+                                      onPressed: () {
+                                        if (brain.currentEmotions.length > 0 &&
+                                            brain.causesOfEmotion.length > 0 &&
+                                            brain.desiredEmotions.length > 0) {
+                                          Provider.of<Brain>(
+                                              context, listen: false)
+                                              .getRecommendExercises().then((
+                                              recommendedExercises) =>
+                                          {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ResultsPage(),
+                                              ),
+                                            ),
+                                          });
+                                        }
+                                        else {
+                                          print('no exercises selected');
+                                          showToast(
+                                              "Please answer all questions to continue.",
+                                              position: ToastPosition.bottom,
+                                              backgroundColor: kDarkBlueColor,
+                                              radius: 13.0,
+                                              textStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  backgroundColor: kDarkBlueColor,
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 24,
+                                                  fontFamily: 'OpenSans'),
+                                              animationBuilder: Miui10AnimBuilder()
+                                          );
+                                        }
+                                      }
+                                  )
+                                ]
+                            )
+                        )
+                    )
+                  ]
+              );
+            }
+        )
+        )
     );
   }
 }

@@ -82,12 +82,13 @@ class ReviewPage extends StatelessWidget {
           new TextSpan(
               text: 'When you started, you were ', style: kTimeLineTextStyle),
           new TextSpan(
-              text: '${exercise.labelsTargetEmotion.join(', ')} ',
+              text: '${brain.currentEmotions.join(', ')} ',
               style: kTimeLineHighlightTextStyle),
           new TextSpan(text: 'about ', style: kTimeLineTextStyle),
           new TextSpan(
-              text: '${exercise.labelsCauseOfEmotion.join(', ')}.',
+              text: '${brain.causesOfEmotion.join(', ')} ',
               style: kTimeLineHighlightTextStyle),
+          new TextSpan(text: 'problems.', style: kTimeLineTextStyle),
         ],
       ),
     );
@@ -115,11 +116,11 @@ class ReviewPage extends StatelessWidget {
               text: 'Before the exercise, you said you wanted to feel ',
               style: kTimeLineTextStyle),
           new TextSpan(
-              text: '${exercise.labelsEffectAndGoal.join(', ')}. ',
+              text: '${brain.desiredEmotions.join(', ')}. ',
               style: kTimeLineTextStyle),
           new TextSpan(text: 'Are you ', style: kTimeLineTextStyle),
           new TextSpan(
-              text: '${exercise.labelsEffectAndGoal.join(', ')} ',
+              text: '${brain.desiredEmotions.join(', ')} ',
               style: kTimeLineHighlightTextStyle),
           new TextSpan(text: 'now?', style: kTimeLineTextStyle),
         ],
@@ -232,7 +233,7 @@ class ReviewPage extends StatelessWidget {
                           ? Text('')
                           : timeLineExerciseStepText(
                               stepNumber: i,
-                              instruction: exercise.instructions[i].detail),
+                              instruction: exercise.instructions[i].content),
                     ),
                     SizedBox(
                       height: 10.0,
@@ -272,7 +273,7 @@ class ReviewPage extends StatelessWidget {
                           ? Text('')
                           : timeLineExerciseStepText(
                               stepNumber: i,
-                              instruction: exercise.instructions[i].detail),
+                              instruction: exercise.instructions[i].content),
                     ),
                     SizedBox(
                       height: 10.0,
@@ -306,7 +307,7 @@ class ReviewPage extends StatelessWidget {
                           ? Text('')
                           : timeLineExerciseStepText(
                               stepNumber: i,
-                              instruction: exercise.instructions[i].detail),
+                              instruction: exercise.instructions[i].content),
                     ),
                     SizedBox(
                       height: 10.0,

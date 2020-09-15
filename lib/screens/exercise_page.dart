@@ -38,7 +38,7 @@ class _ExercisePageState extends State<ExercisePage> {
   }
 
   _printLatestValue() {
-    print("Second text field: ${myController.text}");
+    print("Last text field: ${myController.text}");
   }
 
   @override
@@ -87,12 +87,12 @@ class _ExercisePageState extends State<ExercisePage> {
                           backgroundColor: kDarkBlueColor,
                         ),
                         title: Text(
-                          instructions[i].detail,
+                          instructions[i].content,
                           style: kHeadLineTimeLineTextStyle,
                         ),
                       ),
-                      // user input/response only if 'text entry'
-                      instructions[i].type == 'text entry'
+                      // user input/response only if 'entry'
+                      instructions[i].type == 'entry'
                           ? Padding(
                               padding:
                                   const EdgeInsets.fromLTRB(50.0, 20.0, 0, 0),
@@ -102,13 +102,7 @@ class _ExercisePageState extends State<ExercisePage> {
                                 maxLines: null,
                                 autofocus: true,
                                 onChanged: (answer) {
-//                                  print(i);
-//                                  print(answer);
                                   answers[i] = answer;
-//                                  print(answers[i]);
-//                                  print(answers.toString());
-
-//                                  return answer;
                                 },
                                 style: kInputTextStyle,
                                 decoration: InputDecoration(
@@ -132,7 +126,7 @@ class _ExercisePageState extends State<ExercisePage> {
       if (_currentStep < totalSteps - 1) {
         setState(() {
           if (myController.text.length == 0 &&
-              widget.exercise.instructions[_currentStep].type == 'text entry') {
+              widget.exercise.instructions[_currentStep].type == 'entry') {
             showToast(
               "Please add your thoughts to continue.",
               position: ToastPosition.bottom,
@@ -153,7 +147,7 @@ class _ExercisePageState extends State<ExercisePage> {
         });
       } else {
         if (myController.text.length == 0 &&
-            widget.exercise.instructions[_currentStep].type == 'text entry') {
+            widget.exercise.instructions[_currentStep].type == 'entry') {
           showToast(
             "Please complete exercise to continue.",
             position: ToastPosition.bottom,
