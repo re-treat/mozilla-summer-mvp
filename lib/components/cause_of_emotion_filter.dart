@@ -93,6 +93,7 @@ class CauseOfEmotionFilterState extends State<CauseOfEmotionFilter> {
           );
         }
         else if(snapshot.hasError){
+          print(snapshot.error);
           return Text(
             'Error loading labels.',
             textAlign: TextAlign.center,
