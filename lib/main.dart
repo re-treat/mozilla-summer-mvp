@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
+import 'package:retreatapp/screens/mood_details.dart';
 
 import 'models/brain.dart';
 import 'screens/input_page.dart';
@@ -21,7 +22,7 @@ class ReTreatApp extends StatelessWidget {
           primaryColor: Colors.white,
           scaffoldBackgroundColor: Colors.white,
         ),
-        home: InputPage(),
+        home: moodDetails(),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
+import 'package:retreatapp/screens/mood_details.dart';
 
 // For most pages, please use B&W, greys, and blues
 // use oranges when you need to highlight / differentiate from the blue
@@ -26,6 +27,25 @@ final trophy = Emoji('trophy', '🏆');
 final clock = Emoji('clock', '⏰');
 final link = Emoji('link', '🔗');
 final smile = Emoji('smile', '😊');
+final stressed = Emoji('stressed', '😥');
+final love = Emoji('love', '🥰');
+//😫😂🥺😷🙄✨
+final Map<String, Emoji> moodMap = {
+  'stressed':stressed
+};
+final Map<String, String> todaysChallengeIdMap = {
+  'stressed': 'visualizing_best_possible_self'
+};
+
+const moodDetailsSubTitleStyle = TextStyle(
+  fontSize: 32.0,
+  fontWeight: FontWeight.w700,
+  fontFamily: 'OpenSans');
+
+const moodDetailsEmojiStyle = TextStyle(
+  fontSize: 100.0,
+  //fontWeight: FontWeight.w700,
+);
 
 const kTitleTextStyle = TextStyle(
     fontSize: 48.0,
