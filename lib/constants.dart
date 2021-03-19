@@ -28,12 +28,7 @@ final trophy = Emoji('trophy', '🏆');
 final clock = Emoji('clock', '⏰');
 final link = Emoji('link', '🔗');
 final smile = Emoji('smile', '😊');
-final stressed = Emoji('stressed', '😥');
-final love = Emoji('love', '🥰');
-//😫😂🥺😷🙄✨
-final Map<String, Emoji> moodMap = {
-  'stressed':stressed
-};
+
 final Map<String, String> todaysChallengeIdMap = {
   'stressed': 'visualizing_best_possible_self'
 };

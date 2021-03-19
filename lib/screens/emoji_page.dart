@@ -9,6 +9,7 @@ import 'package:retreatapp/components/emotion_filter.dart';
 import 'package:retreatapp/components/svgs.dart';
 import 'package:retreatapp/constants.dart';
 import 'package:retreatapp/screens/input_page.dart';
+import 'package:retreatapp/screens/mood_details.dart';
 import 'package:retreatapp/screens/results_page.dart';
 
 import '../models/brain.dart';
@@ -86,7 +87,13 @@ class _EmojiCardState extends State<EmojiCard> {
         ),
         child:InkWell(
         onTap: () {
-
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  moodDetails(moodId: widget._tag),
+            ),
+          );
         },
       onHover: (isHovering) {
         if (isHovering) {

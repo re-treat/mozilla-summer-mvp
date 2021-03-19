@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -6,12 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:retreatapp/models/exercise.dart';
 import 'package:retreatapp/screens/exercise_page.dart';
 import 'package:retreatapp/components/httpUtil.dart';
+import 'package:retreatapp/components/svgs.dart';
 import '../constants.dart';
 
-final mood = moodMap['stressed'];
-final exerciseId = todaysChallengeIdMap['stressed'];
-
-final Uint8List kTransparentImage = new Uint8List.fromList(<int>[
+ final Uint8List kTransparentImage = new Uint8List.fromList(<int>[
   0x89,
   0x50,
   0x4E,
@@ -78,20 +75,32 @@ final Uint8List kTransparentImage = new Uint8List.fromList(<int>[
   0xAE,
 ]);
 
-final title = RichText(
-  text: TextSpan(
-    // Note: Styles for TextSpans must be explicitly defined.
-    // Child text spans will inherit styles from parent
-    style: kTitleTextStyle,
-    children: <TextSpan>[
-      TextSpan(text: mood.code, style: moodDetailsEmojiStyle),
-      TextSpan(text: ' #' + mood.name, style: kTitleTextStyle),
-    ],
-  ),
-);
-
 class moodDetails extends StatelessWidget{
-  @required
+  final String moodId;
+  var exerciseId;
+  var title;
+  moodDetails({Key key, @required this.moodId}){
+    exerciseId = todaysChallengeIdMap[moodId];
+    title = RichText(
+          text: TextSpan(
+            children: [
+              WidgetSpan(
+                child: CircleAvatar(
+                  radius: 60,
+                  foregroundColor: Colors.white,
+                  child: EMOJI_MAP[moodId],
+                  backgroundColor: Colors.white,
+                )
+              ),
+              TextSpan(
+                style: kTitleTextStyle,
+                text: "#" + moodId,
+              )
+            ]
+          ),
+        );
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(

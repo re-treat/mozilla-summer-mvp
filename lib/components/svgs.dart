@@ -83,3 +83,22 @@ final EMOJI_LST = [
   ["lost", '', SVG_LOST],
   ["zenout", '', SVG_ZEN_OUT],
 ];
+
+final Map<String, Widget> EMOJI_MAP = {
+  "love": SVG_LOVE,
+  "frustrated": SVG_FRUSTRATED,
+  "LMAO": SVG_LMAO,
+  "stressed": SVG_STRESSED,
+  "touched": SVG_TOUCHED,
+  "vunerable": SVG_VULNERABLE,
+  "rolling my eyes": SVG_ROLLING_MY_EYE,
+  "excited": SVG_EXCITED,
+  "worried": SVG_WORRIED,
+  "angry": SVG_ANGRY,
+  "happy": SVG_HAPPYS,
+  "sad": SVG_SAD,
+  "indatuated": SVG_INFATUATED,
+  "praying": SVG_PRAYING,
+  "lost": SVG_LOST,
+  "zenout": SVG_ZEN_OUT,
+};
