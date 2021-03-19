@@ -76,5 +76,4 @@ Future<Exercise> getExercise(String exerciseId) async{
 void main() {
   String id = "directing_kindness_to_yourself";
   getExercise(id).then((value) => {print(value)});
-}
-*/
+}*/

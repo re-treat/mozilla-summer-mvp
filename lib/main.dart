@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:retreatapp/screens/mood_details.dart';
 
 import 'models/brain.dart';
-import 'screens/input_page.dart';
+import 'screens/emoji_page.dart';
 
 void main() {
   runApp(ChangeNotifierProvider(
@@ -22,7 +22,7 @@ class ReTreatApp extends StatelessWidget {
           primaryColor: Colors.white,
           scaffoldBackgroundColor: Colors.white,
         ),
-        home: moodDetails(),
+        home: EmojiPage(),
       ),
     );
   }
