@@ -12,6 +12,7 @@ const kLightOrangeColor = Color(0xFFF5D7C9);
 const kBlackColor = Color(0xFF000000);
 const kWhiteColor = Color(0xFFFFFFFF);
 const kGrayTextColor = Color(0xFF666666);
+const kEmojiTag = Color.fromARGB(153 ,0,0,0);
 const kLightGrayTextColor = Color(0xFFBFBFBF);
 const kButtonColor = Color(0xFFBFBFBF);
 

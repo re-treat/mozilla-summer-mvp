@@ -3,7 +3,7 @@ import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
 import 'models/brain.dart';
-import 'screens/input_page.dart';
+import 'screens/emoji_page.dart';
 
 void main() {
   runApp(ChangeNotifierProvider(
@@ -21,7 +21,7 @@ class ReTreatApp extends StatelessWidget {
           primaryColor: Colors.white,
           scaffoldBackgroundColor: Colors.white,
         ),
-        home: InputPage(),
+        home: EmojiPage(),
       ),
     );
   }
