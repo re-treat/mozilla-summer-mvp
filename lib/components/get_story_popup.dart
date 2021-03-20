@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class PostStoryPopUp extends StatelessWidget {
+class GetStoryPopUp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(

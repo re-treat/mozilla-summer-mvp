@@ -1,9 +1,10 @@
 import "package:http/http.dart" as http;
 import 'dart:convert';
 import 'package:retreatapp/models/exercise.dart';
+import 'package:retreatapp/models/story.dart';
 
-//final host = "http://localhost:8081";
-final host = "https://re-treat.uc.r.appspot.com";
+final host = "http://localhost:8081";
+// final host = "https://re-treat.uc.r.appspot.com";
 
 Future<List<String>> getLabels(String question) async {
   var url = host+"/getLabels";
@@ -72,12 +73,31 @@ Future<Exercise> getExercise(String exerciseId) async{
   else { return null; }
 }
 
+/** For get stories */
+Future<Story> getStoryById(String storyId) async {
+  var url = host + "/getStoryById";
+  var header = { 'Content-Type': 'application/json; charset=UTF-8' };
+  var body = {"id": storyId};
+
+  var response = await http.post(url, headers: header, body: jsonEncode(body));
+  if (response.statusCode == 200) {
+    var result = jsonDecode(response.body);
+    String body = result["body"];
+    String author = result["author"];
+    String emotion = result["emotion"];
+    Story story = Story(storyId, body, author, emotion);
+    return story;
+  } else {
+    print("get story error!");
+    return null;
+  }
+}
 
 /** For Create Story Sharing */
 Future<void> createStory(String body, String author, String emotion) async {
   var url = host + "/createStory";
   var header = { 'Content-Type': 'application/json; charset=UTF-8' };
-  var jsonBody = {"body": body, "author": author, "emotion": emotion};
+  var jsonBody = {"body": body, "author": author, "emotion": emotion, "timestamp": DateTime.now().millisecondsSinceEpoch};
   var response = await http.post(url, headers: header, body: jsonEncode(jsonBody));
   // only need to handle error case
   if (response.statusCode != 200) {
@@ -85,6 +105,7 @@ Future<void> createStory(String body, String author, String emotion) async {
       return null;
   }
 }
+
 
 /* For debug use
 void main() {
