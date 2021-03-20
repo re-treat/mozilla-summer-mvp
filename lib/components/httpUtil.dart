@@ -1,6 +1,7 @@
 import "package:http/http.dart" as http;
 import 'dart:convert';
 import 'package:retreatapp/models/exercise.dart';
+import 'package:retreatapp/models/story.dart';
 
 final host = "http://localhost:8081";
 //final host = "https://re-treat.uc.r.appspot.com";
@@ -72,8 +73,30 @@ Future<Exercise> getExercise(String exerciseId) async{
   else { return null; }
 }
 
+Future<List<Story>> getStoriesForEmotion(String emotionId) async {
+  var url = host + '/story/query/?emotion=' + emotionId;
+  var header = {  'Content-Type': 'application/json; charset=UTF-8' };
+  var response = await http.get(url, headers: header);
+
+  if(response.statusCode == 200){
+    var result = jsonDecode(response.body)['result'];
+    var success = result['success'];
+    var data = result['data']['lst'];
+    List<Story> storyList = [];
+    if(success){
+      data.forEach((elem) {
+        Story s = Story(elem['body'], elem['author'], elem['emotion'], elem['timestamp']);
+        storyList.add(s);
+      });
+      return storyList;
+    }
+  }
+  else{ return null; }
+}
+
 /* For debug use
 void main() {
-  String id = "directing_kindness_to_yourself";
-  getExercise(id).then((value) => {print(value)});
-}*/
+  String emotionId = "emoji";
+  getStoriesForEmotion(emotionId).thenh((value) => {print(value)});
+}
+ */
