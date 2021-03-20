@@ -72,6 +72,20 @@ Future<Exercise> getExercise(String exerciseId) async{
   else { return null; }
 }
 
+
+/** For Create Story Sharing */
+Future<void> createStory(String body, String author, String emotion) async {
+  var url = host + "/createStory";
+  var header = { 'Content-Type': 'application/json; charset=UTF-8' };
+  var jsonBody = {"body": body, "author": author, "emotion": emotion};
+  var response = await http.post(url, headers: header, body: jsonEncode(jsonBody));
+  // only need to handle error case
+  if (response.statusCode != 200) {
+      print("createStory Error!");
+      return null;
+  }
+}
+
 /* For debug use
 void main() {
   String id = "directing_kindness_to_yourself";
