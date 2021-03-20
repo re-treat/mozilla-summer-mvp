@@ -30,18 +30,40 @@ final link = Emoji('link', '🔗');
 final smile = Emoji('smile', '😊');
 
 final Map<String, String> todaysChallengeIdMap = {
-  'stressed': 'visualizing_best_possible_self'
+  'love': 'visualizing_best_possible_self',
+  'frustrated': 'directing_kindness_to_yourself',
+  'LMAO': 'feeling_compassion_for_yourself',
+  'stressed': 'get_it_started_5_step_tackling_procrastination_bit_by_bit',
+  'touched': 'feeling_compassion_for_yourself',
+  'vulnerable': 'your_assertive_script_build_assertiveness_for_yourself',
+  'rolling my eyes': 'feeling_the_vastness_practice_awe_narrative',
+  'excited': 'visualizing_best_possible_self',
+  'worried': 'feeling_the_vastness_practice_awe_narrative',
+  'angry': 'your_assertive_script_build_assertiveness_for_yourself',
+  'happy': 'directing_kindness_to_yourself',
+  'sad': 'hack_and_reframe_your_negative_thoughts',
+  'infatuated': 'directing_kindness_to_yourself',
+  'praying': 'feeling_the_vastness_practice_awe_narrative',
+  'lost': 'hack_and_reframe_your_negative_thoughts',
+  'zenout': 'feeling_compassion_for_yourself',
 };
+
+const sharedStoryAuthorStyle = TextStyle(
+    fontSize: 16.0,
+    fontWeight: FontWeight.w600,
+    fontFamily: 'OpenSans'
+);
+
+const sharedStoryBodyStyle = TextStyle(
+  fontSize: 16.0,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'OpenSans'
+);
 
 const moodDetailsSubTitleStyle = TextStyle(
   fontSize: 32.0,
   fontWeight: FontWeight.w700,
   fontFamily: 'OpenSans');
-
-const moodDetailsEmojiStyle = TextStyle(
-  fontSize: 100.0,
-  //fontWeight: FontWeight.w700,
-);
 
 const kTitleTextStyle = TextStyle(
     fontSize: 48.0,

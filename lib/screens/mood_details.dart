@@ -3,12 +3,14 @@ import 'dart:typed_data';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:retreatapp/models/exercise.dart';
+import 'package:retreatapp/models/story.dart';
 import 'package:retreatapp/screens/exercise_page.dart';
 import 'package:retreatapp/components/httpUtil.dart';
 import 'package:retreatapp/components/svgs.dart';
+import 'package:retreatapp/components/shared_story_card.dart';
 import '../constants.dart';
 
- final Uint8List kTransparentImage = new Uint8List.fromList(<int>[
+final Uint8List kTransparentImage = new Uint8List.fromList(<int>[
   0x89,
   0x50,
   0x4E,
@@ -75,87 +77,124 @@ import '../constants.dart';
   0xAE,
 ]);
 
+
+final leftPaddingPct = 0.12;
+
 class moodDetails extends StatelessWidget{
   final String moodId;
   var exerciseId;
   var title;
   moodDetails({Key key, @required this.moodId}){
     exerciseId = todaysChallengeIdMap[moodId];
-    title = RichText(
-          text: TextSpan(
-            children: [
-              WidgetSpan(
-                child: CircleAvatar(
+    title = Row(
+              children: <Widget>[
+                CircleAvatar(
                   radius: 60,
-                  foregroundColor: Colors.white,
+                  foregroundColor: Colors.transparent,
                   child: EMOJI_MAP[moodId],
-                  backgroundColor: Colors.white,
+                  backgroundColor: Colors.transparent,
+                ),
+                Padding(
+                    padding: EdgeInsets.only(left: 13),
+                    child: Text(
+                      "#" + moodId,
+                      style: kTitleTextStyle,
+                    )
                 )
-              ),
-              TextSpan(
-                style: kTitleTextStyle,
-                text: "#" + moodId,
-              )
-            ]
-          ),
-        );
+              ],
+    );
   }
 
   @override
   Widget build(BuildContext context){
     return Scaffold(
+      backgroundColor: Color(0xFFE5E5E5),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.15),
+        child: FloatingActionButton(
+          onPressed: () => {},
+          child: const Icon(Icons.add),
+        ),
+      ),
       appBar: AppBar(
-        title: title,
+        title: Padding(
+          padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct),
+          child: title
+        ),
+        flexibleSpace: Image(
+          image: AssetImage("images/bg.jpg"),
+          fit: BoxFit.fill
+        ),
         centerTitle: false,
-        titleSpacing:
-        (MediaQuery.of(context).size.width * (1 - kWidthFactor)) / 2.5,
-        toolbarHeight: 120.0,
+        //titleSpacing: (MediaQuery.of(context).size.width * (1 - kWidthFactor)) / 2.5,
+        toolbarHeight: 195.0,
         elevation: 0.0,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-              padding: EdgeInsets.only(left: 100.0, top: 20.0),
-              child:
+      body: SingleChildScrollView(
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct, top: 52.0),
+                child:
                 RichText(
-
                   textAlign: TextAlign.left,
                   text: TextSpan(
                     style: moodDetailsSubTitleStyle,
                     text: "Today's Challenge",
                   ),
                 ),
-          ),
-          Padding(
-          padding: EdgeInsets.only(left: 80.0),
-          child:
-            SizedBox(
-              height: MediaQuery.of(context).size.height*0.3,
-              child: StaggeredGridView.countBuilder(
-                primary: false,
-                crossAxisCount: 6,
-                mainAxisSpacing: 4.0,
-                crossAxisSpacing: 4.0,
-                itemBuilder: (context, index) => new _Tile(
-                    index, new IntSize(100, 100), exerciseId),
-                staggeredTileBuilder: (index) => new StaggeredTile.fit(2),
-                itemCount: 1,
               ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 100.0, top: 20),
-            child:
-              RichText(
-                textAlign: TextAlign.left,
-                text: TextSpan(
-                  style: moodDetailsSubTitleStyle,
-                  text: "Shared Stories",
+              Padding(
+                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct-5, top: 16),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height*0.3,
+                  child: StaggeredGridView.countBuilder(
+                    primary: false,
+                    crossAxisCount: 6,
+                    mainAxisSpacing: 4.0,
+                    crossAxisSpacing: 4.0,
+                    itemBuilder: (context, index) => new _Tile(
+                        index, new IntSize(100, 100), exerciseId),
+                    staggeredTileBuilder: (index) => new StaggeredTile.fit(2),
+                    itemCount: 1,
+                  ),
                 ),
               ),
-          )
-        ]
+              Padding(
+                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct, top: 34),
+                child:
+                RichText(
+                  textAlign: TextAlign.left,
+                  text: TextSpan(
+                    style: moodDetailsSubTitleStyle,
+                    text: "Shared Stories",
+                  ),
+                ),
+              ),
+              Padding(
+                  padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct),
+                  child: FutureBuilder<List<Story>>(
+                      future: getStoriesForEmotion(moodId),
+                      builder: (BuildContext context, AsyncSnapshot<List<Story>> snapshot) {
+                        if(snapshot.hasData){
+                          List<Story> stories = snapshot.data;
+                          var col = Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [],
+                          );
+                          stories.forEach((story) {col.children.add(SharedStoryCard(story: story));});
+                          return Padding(
+                            padding: EdgeInsets.only(top: 16, bottom: 52.0),
+                            child: col,
+                          );
+                        }
+                        else if(snapshot.hasError) { return Text(snapshot.error); }
+                        else{ return Text('loading'); }
+                      })
+              )
+            ]
+        )
       )
     );
   }
