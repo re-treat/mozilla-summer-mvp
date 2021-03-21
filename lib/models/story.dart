@@ -1,25 +1,22 @@
-class Story {
-  String id;
-  String author;
+class Story{
   String body;
+  String author;
   String emotion;
+  var timestamp;
 
-  /** Constructor */
-  Story(String id, String body, String author, String emotion) {
-    this.id = id;
+  Story(String body, String author, String emotion, var timestamp){
     this.body = body;
-    this.author = author;
+    this.author = "Anonymous " + author;
     this.emotion = emotion;
+    this.timestamp = timestamp;
   }
 
   String toString() {
-    return
-      """
-      id:   ${this.id}
+    return """
       author: ${this.author}
-      body:${this.body}
       emotion: ${this.emotion}
-      """;
+      body: ${this.body}
+      timestamp: ${this.timestamp}
+    """;
   }
-
 }

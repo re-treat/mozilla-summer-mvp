@@ -162,9 +162,16 @@ class ResultsPage extends StatelessWidget {
           );
         }
         else{
-          return Text(
-            'Loading...',
+          return RichText(
             textAlign: TextAlign.center,
+            text: TextSpan(
+              // Note: Styles for TextSpans must be explicitly defined.
+              // Child text spans will inherit styles from parent
+              style: kTitleTextStyle,
+              children: <TextSpan>[
+                TextSpan(text: "Loading...", style: kTitleHighlightTextStyle),
+              ],
+            ),
           );
         }
       }

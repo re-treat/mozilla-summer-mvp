@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
+import 'package:retreatapp/screens/mood_details.dart';
 
 // For most pages, please use B&W, greys, and blues
 // use oranges when you need to highlight / differentiate from the blue
@@ -12,6 +13,7 @@ const kLightOrangeColor = Color(0xFFF5D7C9);
 const kBlackColor = Color(0xFF000000);
 const kWhiteColor = Color(0xFFFFFFFF);
 const kGrayTextColor = Color(0xFF666666);
+const kEmojiTag = Color.fromARGB(153 ,0,0,0);
 const kLightGrayTextColor = Color(0xFFBFBFBF);
 const kButtonColor = Color(0xFFBFBFBF);
 
@@ -26,6 +28,42 @@ final trophy = Emoji('trophy', '🏆');
 final clock = Emoji('clock', '⏰');
 final link = Emoji('link', '🔗');
 final smile = Emoji('smile', '😊');
+
+final Map<String, String> todaysChallengeIdMap = {
+  'love': 'visualizing_best_possible_self',
+  'frustrated': 'directing_kindness_to_yourself',
+  'LMAO': 'feeling_compassion_for_yourself',
+  'stressed': 'get_it_started_5_step_tackling_procrastination_bit_by_bit',
+  'touched': 'feeling_compassion_for_yourself',
+  'vulnerable': 'your_assertive_script_build_assertiveness_for_yourself',
+  'rolling my eyes': 'feeling_the_vastness_practice_awe_narrative',
+  'excited': 'visualizing_best_possible_self',
+  'worried': 'feeling_the_vastness_practice_awe_narrative',
+  'angry': 'your_assertive_script_build_assertiveness_for_yourself',
+  'happy': 'directing_kindness_to_yourself',
+  'sad': 'hack_and_reframe_your_negative_thoughts',
+  'infatuated': 'directing_kindness_to_yourself',
+  'praying': 'feeling_the_vastness_practice_awe_narrative',
+  'lost': 'hack_and_reframe_your_negative_thoughts',
+  'zenout': 'feeling_compassion_for_yourself',
+};
+
+const sharedStoryAuthorStyle = TextStyle(
+    fontSize: 16.0,
+    fontWeight: FontWeight.w600,
+    fontFamily: 'OpenSans'
+);
+
+const sharedStoryBodyStyle = TextStyle(
+  fontSize: 16.0,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'OpenSans'
+);
+
+const moodDetailsSubTitleStyle = TextStyle(
+  fontSize: 32.0,
+  fontWeight: FontWeight.w700,
+  fontFamily: 'OpenSans');
 
 const kTitleTextStyle = TextStyle(
     fontSize: 48.0,

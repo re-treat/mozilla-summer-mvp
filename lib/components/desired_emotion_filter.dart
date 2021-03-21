@@ -92,6 +92,7 @@ class DesiredEmotionFilterState extends State<DesiredEmotionFilter> {
           );
         }
         else if(snapshot.hasError){
+          print(snapshot.error);
           return Text(
             'Error loading labels.',
             textAlign: TextAlign.center,
