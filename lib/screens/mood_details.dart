@@ -11,6 +11,7 @@ import 'package:retreatapp/components/svgs.dart';
 import 'package:retreatapp/components/animation.dart';
 import 'package:retreatapp/components/shared_story_card.dart';
 import '../constants.dart';
+import 'package:retreatapp/components/js-bridge.dart';
 
 final Uint8List kTransparentImage = new Uint8List.fromList(<int>[
   0x89,
@@ -140,13 +141,16 @@ class moodDetails extends StatelessWidget{
 
   @override
   Widget build(BuildContext context){
+    setHost(host);
     var screenSize = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Color(0xFFE5E5E5),
       floatingActionButton: Padding(
         padding: EdgeInsets.fromLTRB(40,0,MediaQuery.of(context).size.width * 0.15,0),
         child: FloatingActionButton(
-          onPressed: () => {},
+          onPressed: ()  {
+          showInput(moodId);
+          },
           child: const Icon(Icons.add),
         ),
       ),
