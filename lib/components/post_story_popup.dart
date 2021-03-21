@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_beautiful_popup/main.dart';
+import 'package:retreatapp/constants.dart';
 
 class PostStoryPopUp extends BeautifulPopupTemplate {
   final BeautifulPopup options;
   PostStoryPopUp(this.options) : super(options);
 
   @override
-  Color get primaryColor => options.primaryColor ?? Color(0xff000000); // The default primary color of the template is Colors.black.
+  Color get primaryColor => options.primaryColor ?? kLightBlueColor; 
   @override
   final maxWidth = 400; // In most situations, the value is the illustration size.
   @override
@@ -14,7 +15,6 @@ class PostStoryPopUp extends BeautifulPopupTemplate {
   @override
   final bodyMargin = 10;
 
-  // You need to adjust the layout to fit into your illustration.
   @override
   get layout {
     return [

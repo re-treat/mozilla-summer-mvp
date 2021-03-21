@@ -78,14 +78,17 @@ Future<Story> getStoryById(String storyId) async {
   var url = host + "/getStoryById";
   var header = { 'Content-Type': 'application/json; charset=UTF-8' };
   var body = {"id": storyId};
-
+  // Story(String id,String body, String author, String emotion, var timestamp,List<String> responses, int count)
   var response = await http.post(url, headers: header, body: jsonEncode(body));
   if (response.statusCode == 200) {
     var result = jsonDecode(response.body);
     String body = result["body"];
     String author = result["author"];
     String emotion = result["emotion"];
-    Story story = Story(storyId, body, author, emotion);
+    var timestamp = result["timestamp"];
+    List<String> responses = result["responses"];
+    var count = result["count"]
+    Story story = Story(storyId, body, author, emotion, timestamp, responses, count);
     return story;
   } else {
     print("get story error!");
@@ -97,7 +100,8 @@ Future<Story> getStoryById(String storyId) async {
 Future<void> createStory(String body, String author, String emotion) async {
   var url = host + "/createStory";
   var header = { 'Content-Type': 'application/json; charset=UTF-8' };
-  var jsonBody = {"body": body, "author": author, "emotion": emotion, "timestamp": DateTime.now().millisecondsSinceEpoch};
+  // Story(String id,String body, String author, String emotion, var timestamp,List<String> responses, int count)
+  var jsonBody = {"body": body, "author": author, "emotion": emotion, "timestamp": DateTime.now().millisecondsSinceEpoch, "responses": new List<String>(), "count": 0};
   var response = await http.post(url, headers: header, body: jsonEncode(jsonBody));
   // only need to handle error case
   if (response.statusCode != 200) {
