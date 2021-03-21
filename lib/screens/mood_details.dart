@@ -1,5 +1,6 @@
 import 'dart:typed_data';
-
+import 'dart:math';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:retreatapp/models/exercise.dart';
@@ -139,6 +140,7 @@ class moodDetails extends StatelessWidget{
 
   @override
   Widget build(BuildContext context){
+    var screenSize = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Color(0xFFE5E5E5),
       floatingActionButton: Padding(
@@ -187,22 +189,12 @@ class moodDetails extends StatelessWidget{
                   ),
                 ),
               ),
-              Padding(
+              Container(
+//                height: MediaQuery.of(context).size.width*0.3,
+                width: min(screenSize.width,max(500, screenSize.width*0.5)),
                 padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct-5, top: 16),
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height*0.3,
-                  child: StaggeredGridView.countBuilder(
-                    primary: false,
-                    crossAxisCount: 6,
-                    mainAxisSpacing: 4.0,
-                    crossAxisSpacing: 4.0,
-                    itemBuilder: (context, index) => new _Tile(
-                        index, new IntSize(100, 100), exerciseId),
-                    staggeredTileBuilder: (index) => new StaggeredTile.fit(2),
-                    itemCount: 1,
-                  ),
-                ),
-              ),
+                child: _Tile(
+                    0, new IntSize(100, 100), exerciseId)),
               Padding(
                 padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct, top: 34),
                 child:
@@ -232,7 +224,8 @@ class moodDetails extends StatelessWidget{
                           );
                         }
                         else if(snapshot.hasError) { return Text(snapshot.error); }
-                        else{ return Text('loading'); }
+                        else{ return const Text('Loading'
+                        , style:loadingStyle );}
                       })
               )
             ]
@@ -351,21 +344,27 @@ class _Tile extends StatelessWidget {
             );
           }
           else{
-            return RichText(
-              textAlign: TextAlign.left,
-              text: TextSpan(
-                // Note: Styles for TextSpans must be explicitly defined.
-                // Child text spans will inherit styles from parent
-                style: moodDetailsSubTitleStyle,
-                children: <TextSpan>[
-                  TextSpan(text: "Loading...", style: moodDetailsSubTitleStyle),
-                ],
-              ),
-            );
+            return Padding(
+              padding: EdgeInsets.only(left: 5),
+                child:const Text("Loading...", style: loadingStyle));
           }
     });
   }
 }
+//class ex{
+//
+//bool _commented;
+//
+//_CardContentText() {
+//  _commented = ResponseHistory.hasResponded(widget.id);
+//}
+//
+//void response(response) {
+//  sendResponse(widget.id, response);
+//  ResponseHistory.respond(widget.id);
+//}
+//
+//}
 
 class CardContentText extends StatelessWidget {
   const CardContentText({
@@ -389,11 +388,14 @@ class CardContentText extends StatelessWidget {
           // Child text spans will inherit styles from parent
           children: <TextSpan>[
             TextSpan(text: '$emoji '),
-            TextSpan(text: '$header: ', style: kCardContentHeaderTextStyle),
-            TextSpan(text: '$content', style: kCardContentDetailTextStyle),
+            TextSpan(
+                text: '$header: ', style: kCardContentHeaderTextStyle),
+            TextSpan(
+                text: '$content', style: kCardContentDetailTextStyle),
           ],
         ),
       ),
     );
   }
 }
+
