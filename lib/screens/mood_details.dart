@@ -112,7 +112,9 @@ class moodDetails extends StatelessWidget{
       floatingActionButton: Padding(
         padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.15),
         child: FloatingActionButton(
-          onPressed: () => {},
+          onPressed: () => {
+
+          },
           child: const Icon(Icons.add),
         ),
       ),

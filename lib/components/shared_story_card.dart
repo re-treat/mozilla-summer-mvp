@@ -10,7 +10,9 @@ class SharedStoryCard extends StatelessWidget{
     return Padding(
       padding: EdgeInsets.only(top: 26.0),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.of(context).pop();
+        },
         child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.7,
             height: 227,
