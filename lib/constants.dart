@@ -30,7 +30,15 @@ final trophy = Emoji('trophy', '🏆');
 final clock = Emoji('clock', '⏰');
 final link = Emoji('link', '🔗');
 final smile = Emoji('smile', '😊');
-
+// Responses
+//Names can be confusing, do not change due to legacies
+final Map<String,String> respEmoji = {
+  'sad': '😞',
+  'tears': '😆',
+  'like': '🧡',
+  'love': '🤗',
+  'hate': '🥺'
+};
 final Map<String, String> todaysChallengeIdMap = {
   'love': 'visualizing_best_possible_self',
   'frustrated': 'directing_kindness_to_yourself',
@@ -62,11 +70,24 @@ const sharedStoryBodyStyle = TextStyle(
   fontFamily: 'OpenSans'
 );
 
+const sharedStoryEmojiStyle = TextStyle(
+    fontSize: 20.0,
+  fontFamily: "EmojiOne"
+);
+
+const sharedStoryRespEmojiStyle = TextStyle(
+  fontSize: 30.0,
+    fontFamily: "EmojiOne"
+);
+
 const moodDetailsSubTitleStyle = TextStyle(
   fontSize: 32.0,
   fontWeight: FontWeight.w700,
   fontFamily: 'OpenSans');
 
+const loadingStyle = TextStyle(
+  fontSize: 20
+);
 const kTitleTextStyle = TextStyle(
     fontSize: 48.0,
     fontWeight: FontWeight.w700,

@@ -25,6 +25,7 @@ dependencies:
     sdk: flutter
   http: 0.12.2
   flutter_emoji: ^2.2.1+1
+  localstorage: ^3.0.6
   oktoast: ^2.3.2
   provider: ^4.3.2+1
   date_format: ^1.0.8
@@ -88,6 +89,11 @@ flutter:
           weight: 700
         - asset: fonts/OpenSans-ExtraBold.ttf
           weight: 800
+
+    - family: EmojiOne
+      fonts:
+        - asset: fonts/EmojiOneColor.otf
+
 
 
   # For details regarding fonts from package dependencies,

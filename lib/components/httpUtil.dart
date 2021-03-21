@@ -85,7 +85,9 @@ Future<List<Story>> getStoriesForEmotion(String emotionId) async {
     List<Story> storyList = [];
     if(success){
       data.forEach((elem) {
-        Story s = Story(elem['body'], elem['author'], elem['emotion'], elem['timestamp']);
+        List<String> response = (elem['responses'] as List)?.map((
+            item) => item as String)?.toList();
+        Story s = Story(elem['id'].toString(),elem['body'], elem['author'], elem['emotion'], elem['timestamp'],response,elem['resp_count']);
         storyList.add(s);
       });
       return storyList;
@@ -94,6 +96,22 @@ Future<List<Story>> getStoriesForEmotion(String emotionId) async {
   else{ return null; }
 }
 
+
+void logVisit(String pageName, Map<String, Object> data) async {
+  var url = host + '/log/';
+  var header = { 'Content-Type': 'application/json; charset=UTF-8'};
+  var body = { "pageName": pageName, "data": data};
+  var response = await http.post(url, headers: header, body: jsonEncode(body));
+  return;
+}
+
+void sendResponse(String pageName, String resp) async {
+  var url = host + '/story/response/';
+  var header = { 'Content-Type': 'application/json; charset=UTF-8'};
+  var body = { "storyId": pageName, "response": resp};
+  var response = await http.post(url, headers: header, body: jsonEncode(body));
+  return;
+}
 /* For debug use
 void main() {
   String emotionId = "emoji";
