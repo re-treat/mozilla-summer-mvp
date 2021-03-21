@@ -90,9 +90,9 @@ flutter:
         - asset: fonts/OpenSans-ExtraBold.ttf
           weight: 800
 
-    - family: EmojiOne
-      fonts:
-        - asset: fonts/EmojiOneColor.otf
+#    - family: EmojiOne
+#      fonts:
+#        - asset: fonts/EmojiOneColor.otf
 
 
 

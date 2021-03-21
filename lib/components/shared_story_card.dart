@@ -14,6 +14,16 @@ class SharedStoryCard extends StatefulWidget{
   _SharedStoryCardState createState() => _SharedStoryCardState(story.id);
 }
 
+Widget RichTextEmoji(String text,{TextStyle style}){
+//  return RichText(
+//      text: TextSpan(
+//          text: text,
+//          style:style
+//      )
+//  );
+  return Text(text, style: style);
+}
+
 class _SharedStoryCardState extends State<SharedStoryCard> {
   bool _commented;
   double _opacity;
@@ -40,7 +50,7 @@ class _SharedStoryCardState extends State<SharedStoryCard> {
   Widget getEmojiList(List<String> responses){
     return Row(
         children:responses.map((e) {
-      return Text(respEmoji.containsKey(e) ? respEmoji[e]:"", style:sharedStoryEmojiStyle);
+      return RichTextEmoji(respEmoji.containsKey(e) ? respEmoji[e]:"", style:sharedStoryEmojiStyle);
     }).toList()
     );
   }
@@ -170,7 +180,7 @@ class _SharedStoryCardState extends State<SharedStoryCard> {
     return OnHoverScale(InkWell(
         onTap: (){respond(e.key);
         setOpacity(0.0);},
-        child:Text(e.value, style: sharedStoryRespEmojiStyle)),1.2);
+        child: RichTextEmoji(e.value, style: sharedStoryRespEmojiStyle)),1.2);
     }).toList()
        ),
      )));

@@ -69,15 +69,18 @@ const sharedStoryBodyStyle = TextStyle(
   fontWeight: FontWeight.w400,
   fontFamily: 'OpenSans'
 );
-
+/*
+It seems the fultter will pull notocoloremojicompat font for emoji render regardsless of
+our font setting, so drop config
+* */
 const sharedStoryEmojiStyle = TextStyle(
     fontSize: 20.0,
-  fontFamily: "EmojiOne"
+//  fontFamily: "EmojiOne"
 );
 
 const sharedStoryRespEmojiStyle = TextStyle(
   fontSize: 30.0,
-    fontFamily: "EmojiOne"
+//    fontFamily: "EmojiOne"
 );
 
 const moodDetailsSubTitleStyle = TextStyle(
