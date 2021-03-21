@@ -7,6 +7,7 @@ import 'package:retreatapp/models/story.dart';
 import 'package:retreatapp/screens/exercise_page.dart';
 import 'package:retreatapp/components/httpUtil.dart';
 import 'package:retreatapp/components/svgs.dart';
+import 'package:retreatapp/components/animation.dart';
 import 'package:retreatapp/components/shared_story_card.dart';
 import '../constants.dart';
 
@@ -83,26 +84,57 @@ final leftPaddingPct = 0.12;
 class moodDetails extends StatelessWidget{
   final String moodId;
   var exerciseId;
-  var title;
+  Widget getTitle(context){
+    return Row(
+      children: <Widget>[
+        OnHoverScale(Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                    blurRadius: 8,
+                    color: kBackButtonShadow,
+                    spreadRadius: 5)
+              ],
+            ),
+            child:
+                InkWell(
+                onTap: () {
+                  Navigator.maybePop(context);
+                },
+//                      onHover: (hovor){},
+                child: CircleAvatar(
+                  child: Icon(Icons.arrow_back_ios),
+                  foregroundColor: kBackButton,
+                  backgroundColor: Colors.white,
+                  radius: 30,
+                )
+                )
+
+
+        ),1.25),
+        Padding(
+            padding: EdgeInsets.only(left: 50),
+            child: CircleAvatar(
+              radius: 60,
+              foregroundColor: Colors.transparent,
+              child: EMOJI_MAP[moodId],
+              backgroundColor: Colors.transparent,
+            )),
+        Padding(
+            padding: EdgeInsets.only(left: 13),
+            child: Text(
+              "#" + moodId,
+              style: kTitleTextStyle,
+            )
+        )
+      ],
+    );
+  }
   moodDetails({Key key, @required this.moodId}){
     exerciseId = todaysChallengeIdMap[moodId];
-    title = Row(
-              children: <Widget>[
-                CircleAvatar(
-                  radius: 60,
-                  foregroundColor: Colors.transparent,
-                  child: EMOJI_MAP[moodId],
-                  backgroundColor: Colors.transparent,
-                ),
-                Padding(
-                    padding: EdgeInsets.only(left: 13),
-                    child: Text(
-                      "#" + moodId,
-                      style: kTitleTextStyle,
-                    )
-                )
-              ],
-    );
+
   }
 
   @override
@@ -110,32 +142,42 @@ class moodDetails extends StatelessWidget{
     return Scaffold(
       backgroundColor: Color(0xFFE5E5E5),
       floatingActionButton: Padding(
-        padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.15),
+        padding: EdgeInsets.fromLTRB(40,0,MediaQuery.of(context).size.width * 0.15,0),
         child: FloatingActionButton(
           onPressed: () => {},
           child: const Icon(Icons.add),
         ),
       ),
+
       appBar: AppBar(
-        title: Padding(
-          padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct),
-          child: title
-        ),
-        flexibleSpace: Image(
-          image: AssetImage("images/bg.jpg"),
-          fit: BoxFit.fill
-        ),
-        centerTitle: false,
-        //titleSpacing: (MediaQuery.of(context).size.width * (1 - kWidthFactor)) / 2.5,
-        toolbarHeight: 195.0,
-        elevation: 0.0,
+        automaticallyImplyLeading: false,
+        flexibleSpace: Stack(
+          children:[ConstrainedBox(
+            constraints: BoxConstraints.expand(),
+            child: Image(
+                image: AssetImage("images/bg.jpg"),
+                fit: BoxFit.cover
+            ),
+          ),
+          Container(
+            alignment: Alignment(-1,0),
+      padding: EdgeInsets.fromLTRB( MediaQuery.of(context).size.width * leftPaddingPct,0,0,0),
+      child: getTitle(context)
+      ),
+
+          ]),
+
+      centerTitle: false,
+      //titleSpacing: (MediaQuery.of(context).size.width * (1 - kWidthFactor)) / 2.5,
+      toolbarHeight: 195.0,
+      elevation: 0.0,
       ),
       body: SingleChildScrollView(
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct, top: 52.0),
+      child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+      Padding(
+      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct, top: 52.0),
                 child:
                 RichText(
                   textAlign: TextAlign.left,
