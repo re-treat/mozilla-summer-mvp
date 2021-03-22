@@ -234,6 +234,7 @@ class _EmojiPageState extends State<EmojiPage> {
                                         alignment: Alignment(1, 0),
                                         child: OutlinedButton(
                                           onPressed: () {
+                                            logVisit('ExerciseInputPage',{"from":"MoodBoard"});
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(

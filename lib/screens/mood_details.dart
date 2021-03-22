@@ -154,6 +154,7 @@ class moodDetails extends StatelessWidget{
         padding: EdgeInsets.fromLTRB(40,0,MediaQuery.of(context).size.width * 0.15,0),
         child: FloatingActionButton(
           onPressed: ()  {
+            logVisit('OpenStorySharing', {"from": "MoodDetail","emoji":moodId});
           showInput(moodId);
           },
           child: const Icon(Icons.add),
@@ -352,6 +353,8 @@ class _Tile extends StatelessWidget {
             exercise = snapshot.data;
             return InkWell(
               onTap: () {
+                logVisit('StartExercise',
+                    {"from": "MoodDetail"});
                 Navigator.push(
                     context,
                     MaterialPageRoute(
