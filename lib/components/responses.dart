@@ -12,9 +12,9 @@ String utf8convert(String text) {
 
 class ResponseHistory {
   static final LocalStorage storage = new LocalStorage('resp_history');
-
   static bool hasResponded(String storyId){
-      return storage.getItem(storyId) != null;
+      var item = storage.getItem(storyId);
+      return storage.getItem(storyId) != null && item as bool;
 
   }
 

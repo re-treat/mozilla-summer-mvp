@@ -26,6 +26,9 @@
       opacity: 0.2;
 
     }
+    .exchange {
+      margin-left: 10px;
+    }
 
     #popup {
       z-index: 3;
@@ -87,10 +90,12 @@
     }
 
     .text-area {
+      color: #888888;
       font-family: Open Sans;
       font-style: normal;
-      font-weight: 800;
-      font-size: 15px;
+      font-weight: 200;
+      font-size: 18px;
+      line-height: 25px;
       width: 100%;
       height: 60%;
       border: 3px solid darkgray;
@@ -104,8 +109,25 @@
       /*margin-top: 10px;*/
       /*padding-bottom: 10px;*/
       /*height: 180px;*/
-      text-align: right;
+      display: flex;
+      align-items: center;
     }
+
+    .button>span:first-of-type {
+      font-family: Open Sans;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 25px;
+      /* identical to box height */
+      color: rgba(0, 0, 0, 0.25);
+    }
+
+    .button > span:nth-of-type(2) {
+      margin-left: 10px;
+      color: black;
+    }
+
 
     .button svg:hover {
       transition: linear;
@@ -135,6 +157,22 @@
     <div class="tell-story">Tell your story</div>
     <textarea id="text" class="text-area"></textarea>
     <div class="button">
+      <span>Select your displayed name:</span><span id="anonName">Anon </span>
+      <span class="exchange"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g opacity="0.2" clip-path="url(#clip0)">
+<path d="M10.4533 7.94998V8.95554C10.4533 9.2749 10.5171 9.54285 10.643 9.75159C10.8166 10.0397 11.1017 10.2048 11.4253 10.2048C11.7424 10.2048 12.0575 10.0504 12.3617 9.74609L15.683 6.42487C16.4122 5.69565 16.4122 4.50912 15.683 3.77991L12.3617 0.458679C12.0575 0.154266 11.7424 0 11.4253 0C10.9415 0 10.4533 0.386353 10.4533 1.24924V2.16248C5.73807 2.44095 1.83457 6.05957 1.25443 10.7973C1.22193 11.0619 1.37238 11.3152 1.62034 11.4133C1.69053 11.441 1.76362 11.4545 1.83579 11.4545C2.01859 11.4545 2.1959 11.3689 2.30881 11.2146C3.8649 9.08844 6.36337 7.81906 8.99216 7.81906C9.47921 7.81906 9.96902 7.86301 10.4533 7.94998Z"
+      fill="black"/>
+<path d="M18.3693 8.58675C18.1213 8.48849 17.8384 8.57027 17.6808 8.78558C16.1249 10.9116 13.6264 12.181 10.9976 12.181C10.5106 12.181 10.0208 12.137 9.53644 12.05V11.0445C9.53644 10.1816 9.04816 9.79525 8.56445 9.79525C8.24738 9.79525 7.93228 9.94967 7.62787 10.2541L4.30664 13.5752C3.57758 14.3044 3.57758 15.4909 4.30679 16.2203L7.62787 19.5413C7.93228 19.8458 8.24738 20 8.56445 20C9.04816 20 9.53644 19.6137 9.53644 18.7508V17.8375C14.2519 17.5591 18.1552 13.9405 18.7354 9.2029C18.7679 8.93816 18.6174 8.68487 18.3693 8.58675Z"
+      fill="black"/>
+</g>
+<defs>
+<clipPath id="clip0">
+<rect width="20" height="20" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+</span>
+      <span style="flex-grow: 1"></span>
       <span class="btn">
       <svg width="69" height="69" viewBox="0 0 69 69" fill="none" xmlns="http://www.w3.org/2000/svg"
            xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -178,8 +216,11 @@
   showInput = (emoji) => {
     $('.header .btn').unbind().on('click', ()=>$('#popup').hide());
     $('.button .btn').unbind().on('click', ()=> createStory(emoji));
+    $('.exchange').unbind().on('click',()=>updateName());
     $('#popup').show();
   }
+  anonNames = ["Noah", "Liam", "Lucas", "Oliver", "William", "Gabriel", "Daniel", "Adam", "Benjamin", "James", "Ethan", "Alexander", "Samuel", "Jacob", "David", "Leo", "Logan", "Mason", "Jack", "Elijah", "Henry", "Thomas", "Sebastian", "Michael", "Isaac", "Mateo", "Joseph", "Nathan", "Dylan", "Julian", "Joshua", "Matthew", "Jackson", "Hugo", "Aiden", "Owen", "Jayden", "Aaron", "Levi", "Adrian", "Carter", "Luke", "Leonardo", "John", "Arthur", "Ryan", "Jan", "Luca", "Wyatt", "Elias", "Emma", "Olivia", "Amelia", "Mia", "Sofia", "Maria", "Isabella", "Ava", "Sophia", "Charlotte", "Julia", "Anna", "Emily", "Ella", "Alice", "Emilia", "Mila", "Evelyn", "Harper", "Abigail", "Chloe", "Victoria", "Hanna", "Aurora", "Lily", "Lena", "Eva", "Grace", "Elizabeth", "Sara", "Luna", "Laura", "Nora", "Scarlett", "Maja", "Aria", "Hannah", "Sophie", "Zuzanna", "Clara", "Layla", "Elena", "Sarah", "Madison", "Zoe", "Isla", "Avery", "Ellie", "Penelope", "Zofia"]
+  getRandName = ()=> anonNames[parseInt(Math.random() * (anonNames.length-1))] || 'Alicia'
   createStory = (emoji)=>{
     $('#popup').hide();
     $.post({
@@ -188,19 +229,24 @@
       data: JSON.stringify({
         emotion: emoji,
         body:$('#text').val(),
-        author:'anon',
+        author: nameEle.innerText.replace('Anon ',''),
         timestamp: (new Date()).getTime()
       }),
       success: ()=>{
         alert("Success");
-
+        updateStoryLst();
         $('#text').val('');
       },
       dataType: 'json',
       contentType: "application/json"
     });
   }
+
   var text = document.getElementById('text');
+  var nameEle = document.getElementById('anonName');
+  updateName = () =>{
+    nameEle.innerText = 'Anon '+ getRandName()}
+  updateName();
   text.addEventListener("keydown", function (e) {
     if (e.key==' '){
       e.stopPropagation();

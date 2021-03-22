@@ -4,8 +4,11 @@ import 'package:provider/provider.dart';
 
 import 'models/brain.dart';
 import 'screens/emoji_page.dart';
+import 'screens/mood_details.dart';
+import 'dart:js';
 
 void main() {
+  context['updateStoryLst'] = updateStoryLst;
   runApp(ChangeNotifierProvider(
     create: (context) => Brain(),
     child: ReTreatApp(),
@@ -15,6 +18,7 @@ void main() {
 class ReTreatApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     return OKToast(
       child: MaterialApp(
         theme: ThemeData.light().copyWith(

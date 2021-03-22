@@ -82,6 +82,11 @@ final Uint8List kTransparentImage = new Uint8List.fromList(<int>[
 
 
 final leftPaddingPct = 0.12;
+final GlobalKey<_MoodBoardListState> storyKey = GlobalKey();
+
+void updateStoryLst() {
+  storyKey.currentState.update();
+}
 
 class moodDetails extends StatelessWidget{
   final String moodId;
@@ -212,25 +217,7 @@ class moodDetails extends StatelessWidget{
               ),
               Padding(
                   padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct),
-                  child: FutureBuilder<List<Story>>(
-                      future: getStoriesForEmotion(moodId),
-                      builder: (BuildContext context, AsyncSnapshot<List<Story>> snapshot) {
-                        if(snapshot.hasData){
-                          List<Story> stories = snapshot.data;
-                          var col = Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [],
-                          );
-                          stories.forEach((story) {col.children.add(SharedStoryCard(story: story));});
-                          return Padding(
-                            padding: EdgeInsets.only(top: 16, bottom: 52.0),
-                            child: col,
-                          );
-                        }
-                        else if(snapshot.hasError) { return Text(snapshot.error); }
-                        else{ return const Text('Loading'
-                        , style:loadingStyle );}
-                      })
+                  child: MoodBoardList(moodId: moodId,key: storyKey)
               )
             ]
         )
@@ -238,6 +225,108 @@ class moodDetails extends StatelessWidget{
     );
   }
 }
+
+class MoodBoardList extends StatefulWidget {
+  final String moodId;
+
+  MoodBoardList({Key key,@required this.moodId}) : super(key: key);
+  @override
+  _MoodBoardListState createState() => _MoodBoardListState(moodId: moodId);
+}
+class _MoodBoardListState extends State<MoodBoardList> {
+  final String moodId;
+  Future<List<Story>> _future ;
+
+  _MoodBoardListState({@required this.moodId}){
+    _future = getStoriesForEmotion(moodId);
+  }
+  void update(){
+    _future = getStoriesForEmotion(moodId);
+    this.setState(() {
+    });
+  }
+  Widget _buildDataView(snapshot) {
+    List<Story> stories = snapshot.data;
+    var col = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [],
+    );
+    stories.forEach((story) {
+        col.children.add(SharedStoryCard(story: story,callBack:(responses){
+          story.responses = responses;
+          setState((){});
+        }
+      )
+        );
+    });
+    return (Container(
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
+      padding: EdgeInsets.only(top: 16, bottom: 52.0),
+      child: col,
+    ));
+  }
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Story>>(
+        future: _future,
+        builder: (BuildContext context, AsyncSnapshot<List<Story>> snapshot) {
+          if (snapshot.connectionState != ConnectionState.done &&
+              snapshot.connectionState != ConnectionState.active ) {
+            return Text('Loading'
+                , style: loadingStyle);
+          }
+          if (snapshot.hasError) {
+            return Text(snapshot.error);
+          }
+          if (snapshot.hasData) {
+            return _buildDataView(snapshot);
+          }
+          return const Text('No Data'
+              , style: loadingStyle);
+        });
+  }
+}
+
+//class MoodBoardList extends StatefulWidget {
+//  @override
+//  _MoodBoardListState createState() => _MoodBoardListState();
+//}
+//class _MoodBoardListState extends State<MoodBoardList> {
+//
+//  _MoodBoardListState(moodId)
+//
+//  Widget build(BuildContext context) {
+//    return FutureBuilder<List<Story>>(
+//        future: getStoriesForEmotion(moodId),
+//        builder: (BuildContext context, AsyncSnapshot<List<Story>> snapshot) {
+//          if (snapshot.hasData) {
+//            List<Story> stories = snapshot.data;
+//            var col = Column(
+//              crossAxisAlignment: CrossAxisAlignment.start,
+//              children: [],
+//            );
+//            stories.forEach((story) {
+//              col.children.add(SharedStoryCard(story: story));
+//            });
+//            return Padding(
+//              padding: EdgeInsets.only(top: 16, bottom: 52.0),
+//              child: col,
+//            );
+//          }
+//          else if (snapshot.hasError) {
+//            return Text(snapshot.error);
+//          }
+//          else {
+//            return const Text('Loading'
+//                , style: loadingStyle);
+//          }
+//        })
+//  }
+//}
+
+
 
 class IntSize {
   const IntSize(this.width, this.height);
