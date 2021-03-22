@@ -14,6 +14,8 @@ const kBlackColor = Color(0xFF000000);
 const kWhiteColor = Color(0xFFFFFFFF);
 const kGrayTextColor = Color(0xFF666666);
 const kEmojiTag = Color.fromARGB(153 ,0,0,0);
+const kBackButtonShadow = Color.fromARGB(20, 0, 0, 0);
+const kBackButton = Color(0xFFE5E5E5);
 const kLightGrayTextColor = Color(0xFFBFBFBF);
 const kButtonColor = Color(0xFFBFBFBF);
 
@@ -28,7 +30,15 @@ final trophy = Emoji('trophy', '🏆');
 final clock = Emoji('clock', '⏰');
 final link = Emoji('link', '🔗');
 final smile = Emoji('smile', '😊');
-
+// Responses
+//Names can be confusing, do not change due to legacies
+final Map<String,String> respEmoji = {
+  'sad': '😞',
+  'tears': '😆',
+  'like': '🧡',
+  'love': '🤗',
+  'hate': '🥺'
+};
 final Map<String, String> todaysChallengeIdMap = {
   'love': 'visualizing_best_possible_self',
   'frustrated': 'directing_kindness_to_yourself',
@@ -59,12 +69,28 @@ const sharedStoryBodyStyle = TextStyle(
   fontWeight: FontWeight.w400,
   fontFamily: 'OpenSans'
 );
+/*
+It seems the fultter will pull notocoloremojicompat font for emoji render regardsless of
+our font setting, so drop config
+* */
+const sharedStoryEmojiStyle = TextStyle(
+    fontSize: 20.0,
+//  fontFamily: "EmojiOne"
+);
+
+const sharedStoryRespEmojiStyle = TextStyle(
+  fontSize: 30.0,
+//    fontFamily: "EmojiOne"
+);
 
 const moodDetailsSubTitleStyle = TextStyle(
   fontSize: 32.0,
   fontWeight: FontWeight.w700,
   fontFamily: 'OpenSans');
 
+const loadingStyle = TextStyle(
+  fontSize: 20
+);
 const kTitleTextStyle = TextStyle(
     fontSize: 48.0,
     fontWeight: FontWeight.w700,

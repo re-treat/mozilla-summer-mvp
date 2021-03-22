@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:retreatapp/models/exercise.dart';
 import 'package:retreatapp/models/story.dart';
 
-// final host = "http://localhost:8081";
+//final host = "http://localhost:8081";
 //final host = "https://re-treat.uc.r.appspot.com";
 final host = "https://cddo2021.jackli.org";
 
@@ -74,6 +74,7 @@ Future<Exercise> getExercise(String exerciseId) async{
   else { return null; }
 }
 /** For get stories */
+/*
 Future<Story> getStoryById(String storyId) async {
   var url = host + "/getStoryById";
   var header = { 'Content-Type': 'application/json; charset=UTF-8' };
@@ -87,7 +88,7 @@ Future<Story> getStoryById(String storyId) async {
     String emotion = result["emotion"];
     var timestamp = result["timestamp"];
     List<String> responses = result["responses"];
-    var count = result["count"]
+    var count = result["count"];
     Story story = Story(storyId, body, author, emotion, timestamp, responses, count);
     return story;
   } else {
@@ -95,6 +96,7 @@ Future<Story> getStoryById(String storyId) async {
     return null;
   }
 }
+ */
 
 /** For Create Story Sharing */
 Future<void> createStory(String body, String author, String emotion) async {
@@ -110,7 +112,6 @@ Future<void> createStory(String body, String author, String emotion) async {
   }
 }
 
-
 Future<List<Story>> getStoriesForEmotion(String emotionId) async {
   var url = host + '/story/query/?emotion=' + emotionId;
   var header = {  'Content-Type': 'application/json; charset=UTF-8' };
@@ -123,7 +124,9 @@ Future<List<Story>> getStoriesForEmotion(String emotionId) async {
     List<Story> storyList = [];
     if(success){
       data.forEach((elem) {
-        Story s = Story(elem['body'], elem['author'], elem['emotion'], elem['timestamp']);
+        List<String> response = (elem['responses'] as List)?.map((
+            item) => item as String)?.toList();
+        Story s = Story(elem['id'].toString(),elem['body'], elem['author'], elem['emotion'], elem['timestamp'],response,elem['resp_count']);
         storyList.add(s);
       });
       return storyList;
@@ -132,6 +135,35 @@ Future<List<Story>> getStoriesForEmotion(String emotionId) async {
   else{ return null; }
 }
 
+Future<List<String>> getAvailableUsernames(int count) async {
+  var url = host + "/username/get";
+  var header = {  'Content-Type': 'application/json; charset=UTF-8' };
+  var body = { "count": count };
+
+  var response = await http.post(url, headers: header, body: jsonEncode(body));
+  if(response.statusCode == 200){
+    var result = jsonDecode(response.body);
+    print(result);
+    return result.cast<String>();
+  }
+  else{ return null; }
+}
+
+void logVisit(String pageName, Map<String, Object> data) async {
+  var url = host + '/log/';
+  var header = { 'Content-Type': 'application/json; charset=UTF-8'};
+  var body = { "pageName": pageName, "data": data};
+  var response = await http.post(url, headers: header, body: jsonEncode(body));
+  return;
+}
+
+void sendResponse(String pageName, String resp) async {
+  var url = host + '/story/response/';
+  var header = { 'Content-Type': 'application/json; charset=UTF-8'};
+  var body = { "storyId": pageName, "response": resp};
+  var response = await http.post(url, headers: header, body: jsonEncode(body));
+  return;
+}
 /* For debug use
 void main() {
   String emotionId = "emoji";

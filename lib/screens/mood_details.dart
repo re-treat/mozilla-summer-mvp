@@ -1,5 +1,6 @@
 import 'dart:typed_data';
-
+import 'dart:math';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:retreatapp/models/exercise.dart';
@@ -7,7 +8,9 @@ import 'package:retreatapp/models/story.dart';
 import 'package:retreatapp/screens/exercise_page.dart';
 import 'package:retreatapp/components/httpUtil.dart';
 import 'package:retreatapp/components/svgs.dart';
+import 'package:retreatapp/components/animation.dart';
 import 'package:retreatapp/components/shared_story_card.dart';
+import 'package:retreatapp/components/create_story_card.dart';
 import '../constants.dart';
 
 final Uint8List kTransparentImage = new Uint8List.fromList(<int>[
@@ -83,86 +86,129 @@ final leftPaddingPct = 0.12;
 class moodDetails extends StatelessWidget{
   final String moodId;
   var exerciseId;
-  var title;
+  Widget getTitle(context){
+    return Row(
+      children: <Widget>[
+        OnHoverScale(Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                    blurRadius: 8,
+                    color: kBackButtonShadow,
+                    spreadRadius: 5)
+              ],
+            ),
+            child:
+                InkWell(
+                onTap: () {
+                  Navigator.maybePop(context);
+                },
+//                      onHover: (hovor){},
+                child: CircleAvatar(
+                  child: Icon(Icons.arrow_back_ios),
+                  foregroundColor: kBackButton,
+                  backgroundColor: Colors.white,
+                  radius: 30,
+                )
+                )
+
+
+        ),1.25),
+        Padding(
+            padding: EdgeInsets.only(left: 50),
+            child: CircleAvatar(
+              radius: 60,
+              foregroundColor: Colors.transparent,
+              child: EMOJI_MAP[moodId],
+              backgroundColor: Colors.transparent,
+            )),
+        Padding(
+            padding: EdgeInsets.only(left: 13),
+            child: Text(
+              "#" + moodId,
+              style: kTitleTextStyle,
+            )
+        )
+      ],
+    );
+  }
   moodDetails({Key key, @required this.moodId}){
     exerciseId = todaysChallengeIdMap[moodId];
-    title = Row(
-              children: <Widget>[
-                CircleAvatar(
-                  radius: 60,
-                  foregroundColor: Colors.transparent,
-                  child: EMOJI_MAP[moodId],
-                  backgroundColor: Colors.transparent,
-                ),
-                Padding(
-                    padding: EdgeInsets.only(left: 13),
-                    child: Text(
-                      "#" + moodId,
-                      style: kTitleTextStyle,
-                    )
-                )
-              ],
-    );
+
   }
 
   @override
   Widget build(BuildContext context){
+    var screenSize = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Color(0xFFE5E5E5),
       floatingActionButton: Padding(
-        padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.15),
+        padding: EdgeInsets.fromLTRB(40,0,MediaQuery.of(context).size.width * 0.15,0),
         child: FloatingActionButton(
-          onPressed: () => {
-
+          onPressed: () =>
+          {
+            showDialog<void>(
+              context: context,
+              barrierDismissible: false, // user must tap button!
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Create Story'),
+                  content: CreateStoryCard(),
+                  //actions: <Widget>[],
+                );
+              },
+            )
           },
           child: const Icon(Icons.add),
         ),
       ),
+
       appBar: AppBar(
-        title: Padding(
-          padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct),
-          child: title
-        ),
-        flexibleSpace: Image(
-          image: AssetImage("images/bg.jpg"),
-          fit: BoxFit.fill
-        ),
-        centerTitle: false,
-        //titleSpacing: (MediaQuery.of(context).size.width * (1 - kWidthFactor)) / 2.5,
-        toolbarHeight: 195.0,
-        elevation: 0.0,
+        automaticallyImplyLeading: false,
+        flexibleSpace: Stack(
+          children:[ConstrainedBox(
+            constraints: BoxConstraints.expand(),
+            child: Image(
+                image: AssetImage("images/bg.jpg"),
+                fit: BoxFit.cover
+            ),
+          ),
+          Container(
+            alignment: Alignment(-1,0),
+      padding: EdgeInsets.fromLTRB( MediaQuery.of(context).size.width * leftPaddingPct,0,0,0),
+      child: getTitle(context)
+      ),
+
+          ]),
+
+      centerTitle: false,
+      //titleSpacing: (MediaQuery.of(context).size.width * (1 - kWidthFactor)) / 2.5,
+      toolbarHeight: 195.0,
+      elevation: 0.0,
       ),
       body: SingleChildScrollView(
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct, top: 52.0),
+      child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+      Padding(
+      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct, top: 52.0),
                 child:
                 RichText(
                   textAlign: TextAlign.left,
                   text: TextSpan(
                     style: moodDetailsSubTitleStyle,
-                    text: "Today's Challenge",
+                    text: "This Week's Challenge",
                   ),
                 ),
               ),
-              Padding(
+              Container(
+//                height: MediaQuery.of(context).size.width*0.3,
+                width: min(screenSize.width,max(500, screenSize.width*0.5)),
                 padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct-5, top: 16),
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height*0.3,
-                  child: StaggeredGridView.countBuilder(
-                    primary: false,
-                    crossAxisCount: 6,
-                    mainAxisSpacing: 4.0,
-                    crossAxisSpacing: 4.0,
-                    itemBuilder: (context, index) => new _Tile(
-                        index, new IntSize(100, 100), exerciseId),
-                    staggeredTileBuilder: (index) => new StaggeredTile.fit(2),
-                    itemCount: 1,
-                  ),
-                ),
-              ),
+                child: _Tile(
+                    0, new IntSize(100, 100), exerciseId)),
               Padding(
                 padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct, top: 34),
                 child:
@@ -192,7 +238,8 @@ class moodDetails extends StatelessWidget{
                           );
                         }
                         else if(snapshot.hasError) { return Text(snapshot.error); }
-                        else{ return Text('loading'); }
+                        else{ return const Text('Loading'
+                        , style:loadingStyle );}
                       })
               )
             ]
@@ -306,26 +353,32 @@ class _Tile extends StatelessWidget {
           }
           else if(snapshot.hasError){
             return Text(
-              'Error loading today\'s challenge.',
+              "Error loading this week's challenge.",
               textAlign: TextAlign.center,
             );
           }
           else{
-            return RichText(
-              textAlign: TextAlign.left,
-              text: TextSpan(
-                // Note: Styles for TextSpans must be explicitly defined.
-                // Child text spans will inherit styles from parent
-                style: moodDetailsSubTitleStyle,
-                children: <TextSpan>[
-                  TextSpan(text: "Loading...", style: moodDetailsSubTitleStyle),
-                ],
-              ),
-            );
+            return Padding(
+              padding: EdgeInsets.only(left: 5),
+                child:const Text("Loading...", style: loadingStyle));
           }
     });
   }
 }
+//class ex{
+//
+//bool _commented;
+//
+//_CardContentText() {
+//  _commented = ResponseHistory.hasResponded(widget.id);
+//}
+//
+//void response(response) {
+//  sendResponse(widget.id, response);
+//  ResponseHistory.respond(widget.id);
+//}
+//
+//}
 
 class CardContentText extends StatelessWidget {
   const CardContentText({
@@ -349,11 +402,14 @@ class CardContentText extends StatelessWidget {
           // Child text spans will inherit styles from parent
           children: <TextSpan>[
             TextSpan(text: '$emoji '),
-            TextSpan(text: '$header: ', style: kCardContentHeaderTextStyle),
-            TextSpan(text: '$content', style: kCardContentDetailTextStyle),
+            TextSpan(
+                text: '$header: ', style: kCardContentHeaderTextStyle),
+            TextSpan(
+                text: '$content', style: kCardContentDetailTextStyle),
           ],
         ),
       ),
     );
   }
 }
+

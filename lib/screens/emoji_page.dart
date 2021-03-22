@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:retreatapp/components/card_box_decoration.dart';
+import 'package:retreatapp/components/httpUtil.dart';
 import 'package:retreatapp/components/cause_of_emotion_filter.dart';
 import 'package:retreatapp/components/desired_emotion_filter.dart';
 import 'package:retreatapp/components/emotion_filter.dart';
@@ -87,6 +87,10 @@ class _EmojiCardState extends State<EmojiCard> {
         ),
         child:InkWell(
         onTap: () {
+          logVisit("emoji-detail+"+widget._tag,{
+            "from":"MoodBoard",
+            "emoji": widget._tag
+          });
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -159,6 +163,7 @@ class _EmojiPageState extends State<EmojiPage> {
         child: CustomScrollView(
             slivers: [SliverGrid.extent(
               maxCrossAxisExtent: 300,
+                mainAxisSpacing: 10,
               children: emojiRenderList
 
             )
@@ -305,7 +310,7 @@ class _EmojiPageState extends State<EmojiPage> {
                         Column(
                       children:<Widget>[
                         Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(0),
                           child: const Text(''),
 
                         ),
