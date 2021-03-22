@@ -100,7 +100,7 @@ Future<Story> getStoryById(String storyId) async {
 
 /** For Create Story Sharing */
 Future<void> createStory(String body, String author, String emotion) async {
-  var url = host + "/createStory";
+  var url = host + "/story/create/";
   var header = { 'Content-Type': 'application/json; charset=UTF-8' };
   // Story(String id,String body, String author, String emotion, var timestamp,List<String> responses, int count)
   var jsonBody = {"body": body, "author": author, "emotion": emotion, "timestamp": DateTime.now().millisecondsSinceEpoch, "responses": new List<String>(), "count": 0};
