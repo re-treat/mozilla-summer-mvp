@@ -5,7 +5,7 @@ import 'package:retreatapp/components/httpUtil.dart';
 
 class CreateStoryCard extends StatefulWidget {
   var emotion;
-  CreateStoryCard({@required this.emotion});
+  CreateStoryCard(emotionId) { this.emotion = emotionId; }
 
   @override
   _CreateStoryCardState createState() => _CreateStoryCardState(this.emotion);
@@ -19,7 +19,8 @@ class _CreateStoryCardState extends State<CreateStoryCard>{
   var values;
   var dropdownValue;
   var bodyText;
-  _CreateStoryCardState(emotion);
+
+  _CreateStoryCardState(emotion) { this.emotion = emotion; }
 
   Widget build(BuildContext context) {
     return SizedBox(

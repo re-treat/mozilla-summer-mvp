@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:retreatapp/models/exercise.dart';
 import 'package:retreatapp/models/story.dart';
 
-//final host = "http://localhost:8081";
+final host = "http://localhost:8081";
 //final host = "https://re-treat.uc.r.appspot.com";
-final host = "https://cddo2021.jackli.org";
+//final host = "https://cddo2021.jackli.org";
 
 Future<List<String>> getLabels(String question) async {
   var url = host+"/getLabels";
@@ -99,16 +99,21 @@ Future<Story> getStoryById(String storyId) async {
  */
 
 /** For Create Story Sharing */
-Future<void> createStory(String body, String author, String emotion) async {
+Future<bool> createStory(String body, String author, String emotion) async {
+  print(emotion);
   var url = host + "/story/create/";
   var header = { 'Content-Type': 'application/json; charset=UTF-8' };
   // Story(String id,String body, String author, String emotion, var timestamp,List<String> responses, int count)
-  var jsonBody = {"body": body, "author": author, "emotion": emotion, "timestamp": DateTime.now().millisecondsSinceEpoch, "responses": new List<String>(), "count": 0};
+  var jsonBody = {"body": body, "author": author, "emotion": emotion,
+                  "timestamp": DateTime.now().millisecondsSinceEpoch};
   var response = await http.post(url, headers: header, body: jsonEncode(jsonBody));
+  print(response.statusCode);
+  print(response.body);
   // only need to handle error case
-  if (response.statusCode != 200) {
-      print("createStory Error!");
-      return null;
+  if (response.statusCode == 200) { return true; }
+  else {
+    print("createStory Error!");
+    return false;
   }
 }
 

@@ -154,7 +154,7 @@ class moodDetails extends StatelessWidget{
               barrierDismissible: false, // user must tap button!
               builder: (BuildContext context) {
                 return AlertDialog(
-                  content: CreateStoryCard(),
+                  content: CreateStoryCard(this.moodId),
                   //actions: <Widget>[],
                 );
               },
