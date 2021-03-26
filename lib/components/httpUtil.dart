@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:retreatapp/models/exercise.dart';
 import 'package:retreatapp/models/story.dart';
 
-final host = "http://localhost:8081";
+// final host = "http://localhost:8081";
 //final host = "https://re-treat.uc.r.appspot.com";
-//final host = "https://cddo2021.jackli.org";
+final host = "https://cddo2021.jackli.org";
 
 Future<List<String>> getLabels(String question) async {
   var url = host+"/getLabels";
