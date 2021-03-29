@@ -393,11 +393,11 @@ class _Tile extends StatelessWidget {
                                 children: <Widget>[
                                   //new Center(child: new CircularProgressIndicator()),
                                   new Center(
-                                    child: new FadeInImage.memoryNetwork(
-                                      placeholder: kTransparentImage,
-                                      image: exercise.image,
+                                    child: new FadeInImage(
+                                      placeholder: MemoryImage(kTransparentImage),
+                                      image: AssetImage(exercise.image),
                                       fit: BoxFit.fitWidth,
-                                      imageScale: 2.5,
+                                     /* imageScale: 2.5,*/
                                     ),
                                   ),
                                 ],

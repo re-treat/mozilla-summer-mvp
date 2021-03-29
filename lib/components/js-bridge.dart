@@ -7,3 +7,6 @@ external void showInput(dynamic id);
 
 @JS('setHost') // This marks the annotated function as a call to `console.log`
 external void setHost(dynamic host);
+
+@JS('window.alert') // This marks the annotated function as a call to `console.log`
+external void windowAlert(dynamic msg);

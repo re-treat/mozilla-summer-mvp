@@ -222,6 +222,10 @@
   anonNames = ["Noah", "Liam", "Lucas", "Oliver", "William", "Gabriel", "Daniel", "Adam", "Benjamin", "James", "Ethan", "Alexander", "Samuel", "Jacob", "David", "Leo", "Logan", "Mason", "Jack", "Elijah", "Henry", "Thomas", "Sebastian", "Michael", "Isaac", "Mateo", "Joseph", "Nathan", "Dylan", "Julian", "Joshua", "Matthew", "Jackson", "Hugo", "Aiden", "Owen", "Jayden", "Aaron", "Levi", "Adrian", "Carter", "Luke", "Leonardo", "John", "Arthur", "Ryan", "Jan", "Luca", "Wyatt", "Elias", "Emma", "Olivia", "Amelia", "Mia", "Sofia", "Maria", "Isabella", "Ava", "Sophia", "Charlotte", "Julia", "Anna", "Emily", "Ella", "Alice", "Emilia", "Mila", "Evelyn", "Harper", "Abigail", "Chloe", "Victoria", "Hanna", "Aurora", "Lily", "Lena", "Eva", "Grace", "Elizabeth", "Sara", "Luna", "Laura", "Nora", "Scarlett", "Maja", "Aria", "Hannah", "Sophie", "Zuzanna", "Clara", "Layla", "Elena", "Sarah", "Madison", "Zoe", "Isla", "Avery", "Ellie", "Penelope", "Zofia"]
   getRandName = ()=> anonNames[parseInt(Math.random() * (anonNames.length-1))] || 'Alicia'
   createStory = (emoji)=>{
+    if (!$('#text').val()){
+      alert("No Empty Body!!!")
+      return
+    }
     $('#popup').hide();
     $.post({
       type: "POST",

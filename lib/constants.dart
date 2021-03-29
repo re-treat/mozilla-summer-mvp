@@ -85,6 +85,7 @@ const sharedStoryRespEmojiStyle = TextStyle(
 
 const moodDetailsSubTitleStyle = TextStyle(
   fontSize: 32.0,
+  color:Colors.black,
   fontWeight: FontWeight.w700,
   fontFamily: 'OpenSans');
 

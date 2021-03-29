@@ -278,7 +278,8 @@ class _EmojiPageState extends State<EmojiPage> {
                     text: ' ',
                     style: TextStyle(
                       fontSize: 18,
-                        fontFamily: 'OpenSans'
+                        fontFamily: 'OpenSans',
+                        color:Colors.black,
                       //fontWeight: FontWeight.w600,
                     ),
                     children: <TextSpan>[
