@@ -203,6 +203,7 @@
   </div>
   <div id="modal">
 </div>
+</div>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
@@ -210,33 +211,36 @@
     });
   }
 </script>
-<script  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script >
+
+<script src="main.dart.js" type="application/javascript"></script>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
   host = 'http://localhost:8081'
   showInput = (emoji) => {
-    $('.header .btn').unbind().on('click', ()=>$('#popup').hide());
-    $('.button .btn').unbind().on('click', ()=> createStory(emoji));
-    $('.exchange').unbind().on('click',()=>updateName());
+    $('.header .btn').unbind().on('click', () => $('#popup').hide());
+    $('.button .btn').unbind().on('click', () => createStory(emoji));
+    $('.exchange').unbind().on('click', () => updateName());
     $('#popup').show();
   }
   anonNames = ["Noah", "Liam", "Lucas", "Oliver", "William", "Gabriel", "Daniel", "Adam", "Benjamin", "James", "Ethan", "Alexander", "Samuel", "Jacob", "David", "Leo", "Logan", "Mason", "Jack", "Elijah", "Henry", "Thomas", "Sebastian", "Michael", "Isaac", "Mateo", "Joseph", "Nathan", "Dylan", "Julian", "Joshua", "Matthew", "Jackson", "Hugo", "Aiden", "Owen", "Jayden", "Aaron", "Levi", "Adrian", "Carter", "Luke", "Leonardo", "John", "Arthur", "Ryan", "Jan", "Luca", "Wyatt", "Elias", "Emma", "Olivia", "Amelia", "Mia", "Sofia", "Maria", "Isabella", "Ava", "Sophia", "Charlotte", "Julia", "Anna", "Emily", "Ella", "Alice", "Emilia", "Mila", "Evelyn", "Harper", "Abigail", "Chloe", "Victoria", "Hanna", "Aurora", "Lily", "Lena", "Eva", "Grace", "Elizabeth", "Sara", "Luna", "Laura", "Nora", "Scarlett", "Maja", "Aria", "Hannah", "Sophie", "Zuzanna", "Clara", "Layla", "Elena", "Sarah", "Madison", "Zoe", "Isla", "Avery", "Ellie", "Penelope", "Zofia"]
-  getRandName = ()=> anonNames[parseInt(Math.random() * (anonNames.length-1))] || 'Alicia'
-  createStory = (emoji)=>{
-    if (!$('#text').val()){
+  getRandName = () => anonNames[parseInt(Math.random() * (anonNames.length - 1))] || 'Alicia'
+  createStory = (emoji) => {
+    if (!$('#text').val()) {
       alert("No Empty Body!!!")
       return
     }
     $('#popup').hide();
     $.post({
       type: "POST",
-      url: host+'/story/create/',
+      url: host + '/story/create/',
       data: JSON.stringify({
         emotion: emoji,
-        body:$('#text').val(),
-        author: nameEle.innerText.replace('Anon ',''),
+        body: $('#text').val(),
+        author: nameEle.innerText.replace('Anon ', ''),
         timestamp: (new Date()).getTime()
       }),
-      success: ()=>{
+      success: () => {
         alert("Success");
         updateStoryLst();
         $('#text').val('');
@@ -248,27 +252,34 @@
 
   var text = document.getElementById('text');
   var nameEle = document.getElementById('anonName');
-  updateName = () =>{
-    nameEle.innerText = 'Anon '+ getRandName()}
+  updateName = () => {
+    nameEle.innerText = 'Anon ' + getRandName()
+  };
   updateName();
-  text.addEventListener("keydown", function (e) {
-    if (e.key==' '){
-      e.stopPropagation();
-      e.preventDefault();
-      text.value = text.value + e.key;
-    }
 
-  }, false)
-  setHost = (host)=>{
+  init = () => {
+    console.log("INIT");
+    text.addEventListener("keydown", function (e) {
+      console.log(e.key)
+      if (e.key == ' ' || e.key.length > 1) {
+
+        e.stopPropagation();
+        //e.preventDefault();
+        // text.value = text.value + e.key;
+      }
+
+    }, false)
+  };
+  document.addEventListener('DOMContentLoaded', init, false);
+
+
+  setHost = (host) => {
     window.host = host;
   }
   // $('#modal').hide()
 
 
 </script>
-<script src="main.dart.js" type="application/javascript"></script>
-</body>
-
 
 
 </html>
