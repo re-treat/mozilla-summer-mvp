@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'models/brain.dart';
 import 'screens/emoji_page.dart';
+import 'screens/input_page.dart';
 import 'screens/mood_details.dart';
 import 'dart:js';
 
@@ -25,7 +26,10 @@ class ReTreatApp extends StatelessWidget {
           primaryColor: Colors.white,
           scaffoldBackgroundColor: Colors.white,
         ),
-        home: EmojiPage(),
+        routes: {
+          '/': (context) => EmojiPage(),
+          '/input': (context) => InputPage(),
+        },
       ),
     );
   }
