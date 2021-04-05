@@ -452,20 +452,11 @@ class ReviewPage extends StatelessWidget {
                                 BorderRadius.all(Radius.circular(8.0))),
                         color: Colors.white,
                         onPressed: () {
-                          Provider.of<Brain>(context, listen: false)
-                                  .getRecommendExercises().then( (recommendedExercises) => {
-                                  recommendedExercises.forEach((element) {
-                                  print(element.name);
-                                  }),
-                                  Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => InputPage(),
-                                  ),
-                              ),
-                          });
-                        },
-                      ),
+                          Navigator.pushNamed(
+                            context,
+                            "/",
+                          );
+                        }),
                     ),
                   ),
                 ),
