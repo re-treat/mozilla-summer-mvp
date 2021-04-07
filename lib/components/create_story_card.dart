@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:retreatapp/constants.dart';
 import 'package:retreatapp/components/httpUtil.dart';
+import 'package:oktoast/oktoast.dart';
 
 class CreateStoryCard extends StatefulWidget {
   var emotion;
@@ -17,11 +18,25 @@ class _CreateStoryCardState extends State<CreateStoryCard>{
   final widthPct = 0.565;
   final height = 500.0;
   final count = 5;
+  var namesAreFetched = false;
   var values;
   var dropdownValue;
   var bodyText;
 
-  _CreateStoryCardState(emotion) { this.emotion = emotion; }
+  _CreateStoryCardState(emotion) {
+    this.emotion = emotion;
+  }
+
+  Future<List<String>> getNames() async {
+    if(!this.namesAreFetched){
+      await getAvailableUsernames(this.count).then((names) => {
+        this.values = names,
+        this.dropdownValue = this.values[0]
+      });
+      this.namesAreFetched = true;
+    }
+    return this.values;
+  }
 
   Widget build(BuildContext context) {
     return SizedBox(
@@ -87,11 +102,9 @@ class _CreateStoryCardState extends State<CreateStoryCard>{
           Container(
             padding: const EdgeInsets.only(left: 20, bottom: 5),
             child: FutureBuilder<List<String>>(
-                future: getAvailableUsernames(this.count),
+                future: this.getNames(),
                 builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
                   if(snapshot.hasData){
-                    List<String> names = snapshot.data;
-                    this.values = names;
                     return Row(
                       children: <Widget>[
                         Text("Post as: Anonymous "),
@@ -121,19 +134,36 @@ class _CreateStoryCardState extends State<CreateStoryCard>{
                 }
             ),
           ),
-          Container(
-            padding: const EdgeInsets.only(left: 50),
-            child: TextButton(
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Container(
+              padding: const EdgeInsets.only(left: 50),
+              child: TextButton(
                 onPressed: () {
                   var author = this.dropdownValue;
-                  var body = this.bodyText;
-                  createStory(body, author, this.emotion);
-                  Navigator.pop(context);
+                  String body = this.bodyText;
+                  if(body == null || body.isEmpty){
+                    showToast(
+                        "Please say something in your story!",
+                        position: ToastPosition.bottom,
+                        backgroundColor: kDarkBlueColor,
+                        radius: 13.0,
+                        textStyle: TextStyle(
+                            color: Colors.white,
+                            backgroundColor: kDarkBlueColor,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 24,
+                            fontFamily: 'OpenSans'),
+                        animationBuilder: Miui10AnimBuilder()
+                    );
+                  }
+                  else{
+                    createStory(body, author, this.emotion);
+                    Navigator.pop(context);
+                  }
                 },
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: const Icon(FontAwesomeIcons.paperPlane, size: 30)
-                )
+                child: const Icon(FontAwesomeIcons.paperPlane, size: 30)
+              )
             )
           )
         ],

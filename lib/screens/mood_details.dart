@@ -83,9 +83,21 @@ final Uint8List kTransparentImage = new Uint8List.fromList(<int>[
 
 final leftPaddingPct = 0.12;
 
-class moodDetails extends StatelessWidget{
+class moodDetails extends StatefulWidget {
   final String moodId;
+  moodDetails({Key key, @required this.moodId});
+
+  @override
+  _moodDetailsState createState() => _moodDetailsState(this.moodId);
+}
+
+class _moodDetailsState extends State<moodDetails>{
+  var moodId;
   var exerciseId;
+  _moodDetailsState(moodId){
+    this.moodId = moodId;
+    this.exerciseId = todaysChallengeIdMap[moodId];
+  }
   Widget getTitle(context){
     return Row(
       children: <Widget>[
@@ -134,10 +146,6 @@ class moodDetails extends StatelessWidget{
       ],
     );
   }
-  moodDetails({Key key, @required this.moodId}){
-    exerciseId = todaysChallengeIdMap[moodId];
-
-  }
 
   @override
   Widget build(BuildContext context){
@@ -155,10 +163,10 @@ class moodDetails extends StatelessWidget{
               builder: (BuildContext context) {
                 return AlertDialog(
                   content: CreateStoryCard(this.moodId),
-                  //actions: <Widget>[],
                 );
               },
-            )
+            ),
+            this.setState(() {})
           },
           child: const Icon(Icons.add),
         ),
