@@ -82,8 +82,13 @@ final Uint8List kTransparentImage = new Uint8List.fromList(<int>[
 
 
 final leftPaddingPct = 0.12;
+final GlobalKey<_MoodBoardListState> storyKey = GlobalKey();
 
-class moodDetails extends StatefulWidget {
+void updateStoryLst() {
+  storyKey.currentState.update();
+}
+
+  class moodDetails extends StatefulWidget {
   final String moodId;
   moodDetails({Key key, @required this.moodId});
 
