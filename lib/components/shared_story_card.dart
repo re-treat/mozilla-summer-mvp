@@ -7,7 +7,9 @@ import 'package:retreatapp/components/responses.dart';
 
 class SharedStoryCard extends StatefulWidget{
   final Story story;
-  SharedStoryCard({@required this.story});
+  Function callBack;
+
+  SharedStoryCard({@required this.story, @required this.callBack});
 
   @override
   _SharedStoryCardState createState() => _SharedStoryCardState(story.id);
@@ -26,18 +28,28 @@ Widget RichTextEmoji(String text,{TextStyle style}){
 class _SharedStoryCardState extends State<SharedStoryCard> {
   bool _commented;
   double _opacity;
+  List<String> _responses;
   _SharedStoryCardState(id){
-    _commented = false;
+    _commented = ResponseHistory.hasResponded(id);
     _opacity = 0;
   }
 
+  @override
+  void initState() {
+    _responses = widget.story.responses;
+    super.initState();
+  }
+
   void respond(String response) {
-    sendResponse(widget.story.id, response);
+    sendResponse(widget.story.id, response).then((responses)  {
+    print(responses);
+    setState((){_responses=responses;});});
     ResponseHistory.respond(widget.story.id);
     setState(() {
       _commented=true;
     });
     widget.story.addResponses();
+//    widget.callBack();
   }
 
   void setOpacity(double opacity){
@@ -126,7 +138,7 @@ class _SharedStoryCardState extends State<SharedStoryCard> {
                             padding: EdgeInsets.only(bottom: 26.0),
                             child: Row(
                                 children: [
-                                  getEmojiList(widget.story.responses),
+                                  getEmojiList(_responses),
                                   Container(
                                       padding: EdgeInsets.fromLTRB(20, 0, 20,
                                           0),

@@ -10,8 +10,8 @@ import 'package:retreatapp/components/httpUtil.dart';
 import 'package:retreatapp/components/svgs.dart';
 import 'package:retreatapp/components/animation.dart';
 import 'package:retreatapp/components/shared_story_card.dart';
-import 'package:retreatapp/components/create_story_card.dart';
 import '../constants.dart';
+import 'package:retreatapp/components/create_story_card.dart';
 
 final Uint8List kTransparentImage = new Uint8List.fromList(<int>[
   0x89,
@@ -88,21 +88,9 @@ void updateStoryLst() {
   storyKey.currentState.update();
 }
 
-  class moodDetails extends StatefulWidget {
+class moodDetails extends StatelessWidget{
   final String moodId;
-  moodDetails({Key key, @required this.moodId});
-
-  @override
-  _moodDetailsState createState() => _moodDetailsState(this.moodId);
-}
-
-class _moodDetailsState extends State<moodDetails>{
-  var moodId;
   var exerciseId;
-  _moodDetailsState(moodId){
-    this.moodId = moodId;
-    this.exerciseId = todaysChallengeIdMap[moodId];
-  }
   Widget getTitle(context){
     return Row(
       children: <Widget>[
@@ -151,20 +139,22 @@ class _moodDetailsState extends State<moodDetails>{
       ],
     );
   }
+  moodDetails({Key key, @required this.moodId}){
+    exerciseId = todaysChallengeIdMap[moodId];
+
+  }
 
   @override
   Widget build(BuildContext context){
+//    setHost(host);
     var screenSize = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Color(0xFFE5E5E5),
       floatingActionButton: Padding(
         padding: EdgeInsets.fromLTRB(40,0,MediaQuery.of(context).size.width * 0.15,0),
         child: FloatingActionButton(
-          onPressed: () =>
-          {
-          logVisit('OpenStorySharing', {
-          "from": "MoodDetail", "emoji":moodId
-          }),
+          onPressed: ()  {
+            logVisit('OpenStorySharing', {"from": "MoodDetail","emoji":moodId});
             showDialog<void>(
               context: context,
               barrierDismissible: false, // user must tap button!
@@ -173,8 +163,8 @@ class _moodDetailsState extends State<moodDetails>{
                   content: CreateStoryCard(this.moodId),
                 );
               },
-            ),
-            this.setState(() {})
+            );
+//            this.setState(() {});
           },
           child: const Icon(Icons.add),
         ),
@@ -237,25 +227,7 @@ class _moodDetailsState extends State<moodDetails>{
               ),
               Padding(
                   padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * leftPaddingPct),
-                  child: FutureBuilder<List<Story>>(
-                      future: getStoriesForEmotion(moodId),
-                      builder: (BuildContext context, AsyncSnapshot<List<Story>> snapshot) {
-                        if(snapshot.hasData){
-                          List<Story> stories = snapshot.data;
-                          var col = Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [],
-                          );
-                          stories.forEach((story) {col.children.add(SharedStoryCard(story: story));});
-                          return Padding(
-                            padding: EdgeInsets.only(top: 16, bottom: 52.0),
-                            child: col,
-                          );
-                        }
-                        else if(snapshot.hasError) { return Text(snapshot.error); }
-                        else{ return const Text('Loading'
-                        , style:loadingStyle );}
-                      })
+                  child: MoodBoardList(moodId: moodId,key: storyKey)
               )
             ]
         )
@@ -263,6 +235,108 @@ class _moodDetailsState extends State<moodDetails>{
     );
   }
 }
+
+class MoodBoardList extends StatefulWidget {
+  final String moodId;
+
+  MoodBoardList({Key key,@required this.moodId}) : super(key: key);
+  @override
+  _MoodBoardListState createState() => _MoodBoardListState(moodId: moodId);
+}
+class _MoodBoardListState extends State<MoodBoardList> {
+  final String moodId;
+  Future<List<Story>> _future ;
+
+  _MoodBoardListState({@required this.moodId}){
+    _future = getStoriesForEmotion(moodId);
+  }
+  void update(){
+    _future = getStoriesForEmotion(moodId);
+    this.setState(() {
+    });
+  }
+  Widget _buildDataView(snapshot) {
+    List<Story> stories = snapshot.data;
+    var col = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [],
+    );
+    stories.forEach((story) {
+        col.children.add(SharedStoryCard(story: story,callBack:(responses){
+          story.responses = responses;
+          setState((){});
+        }
+      )
+        );
+    });
+    return (Container(
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
+      padding: EdgeInsets.only(top: 16, bottom: 52.0),
+      child: col,
+    ));
+  }
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Story>>(
+        future: _future,
+        builder: (BuildContext context, AsyncSnapshot<List<Story>> snapshot) {
+          if (snapshot.connectionState != ConnectionState.done &&
+              snapshot.connectionState != ConnectionState.active ) {
+            return Text('Loading'
+                , style: loadingStyle);
+          }
+          if (snapshot.hasError) {
+            return Text(snapshot.error);
+          }
+          if (snapshot.hasData) {
+            return _buildDataView(snapshot);
+          }
+          return const Text('No Data'
+              , style: loadingStyle);
+        });
+  }
+}
+
+//class MoodBoardList extends StatefulWidget {
+//  @override
+//  _MoodBoardListState createState() => _MoodBoardListState();
+//}
+//class _MoodBoardListState extends State<MoodBoardList> {
+//
+//  _MoodBoardListState(moodId)
+//
+//  Widget build(BuildContext context) {
+//    return FutureBuilder<List<Story>>(
+//        future: getStoriesForEmotion(moodId),
+//        builder: (BuildContext context, AsyncSnapshot<List<Story>> snapshot) {
+//          if (snapshot.hasData) {
+//            List<Story> stories = snapshot.data;
+//            var col = Column(
+//              crossAxisAlignment: CrossAxisAlignment.start,
+//              children: [],
+//            );
+//            stories.forEach((story) {
+//              col.children.add(SharedStoryCard(story: story));
+//            });
+//            return Padding(
+//              padding: EdgeInsets.only(top: 16, bottom: 52.0),
+//              child: col,
+//            );
+//          }
+//          else if (snapshot.hasError) {
+//            return Text(snapshot.error);
+//          }
+//          else {
+//            return const Text('Loading'
+//                , style: loadingStyle);
+//          }
+//        })
+//  }
+//}
+
+
 
 class IntSize {
   const IntSize(this.width, this.height);
@@ -288,6 +362,8 @@ class _Tile extends StatelessWidget {
             exercise = snapshot.data;
             return InkWell(
               onTap: () {
+                logVisit('StartExercise',
+                    {"from": "MoodDetail"});
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -326,11 +402,11 @@ class _Tile extends StatelessWidget {
                                 children: <Widget>[
                                   //new Center(child: new CircularProgressIndicator()),
                                   new Center(
-                                    child: new FadeInImage.memoryNetwork(
-                                      placeholder: kTransparentImage,
-                                      image: exercise.image,
+                                    child: new FadeInImage(
+                                      placeholder: MemoryImage(kTransparentImage),
+                                      image: AssetImage(exercise.image),
                                       fit: BoxFit.fitWidth,
-                                      imageScale: 2.5,
+                                     /* imageScale: 2.5,*/
                                     ),
                                   ),
                                 ],

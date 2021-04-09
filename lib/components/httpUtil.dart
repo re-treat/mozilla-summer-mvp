@@ -162,12 +162,15 @@ void logVisit(String pageName, Map<String, Object> data) async {
   return;
 }
 
-void sendResponse(String pageName, String resp) async {
+Future<List<String>> sendResponse(String pageName, String resp) async {
   var url = host + '/story/response/';
   var header = { 'Content-Type': 'application/json; charset=UTF-8'};
   var body = { "storyId": pageName, "response": resp};
   var response = await http.post(url, headers: header, body: jsonEncode(body));
-  return;
+  var result = jsonDecode(response.body)['data'];
+  List<String> responses = (result['responses'] as List)?.map((
+      item) => item as String)?.toList();
+  return responses;
 }
 /* For debug use
 void main() {
