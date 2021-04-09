@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:retreatapp/constants.dart';
 import 'package:retreatapp/components/httpUtil.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:retreatapp/screens/mood_details.dart';
 
 class CreateStoryCard extends StatefulWidget {
   var emotion;
@@ -45,12 +46,24 @@ class _CreateStoryCardState extends State<CreateStoryCard>{
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-            padding: const EdgeInsets.only(left: 15),
-            child: Text(
-            "Post my story",
-            style: kLargeButtonTextStyle,
-            )
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.only(left: 15),
+                child: Text(
+                "Post my story",
+                style: kLargeButtonTextStyle,
+                ) 
+              ),
+              Align(
+                alignment: Alignment.topRight,
+                child: Container(
+                // padding: const EdgeInsets.only(left: 50),
+                child: CloseButton(),
+                ),
+              ),
+            ],
           ),
           Container(
             // width: MediaQuery.of(context).size.width * widthPct * 0.88,
@@ -99,7 +112,10 @@ class _CreateStoryCardState extends State<CreateStoryCard>{
               ),
             ),
           ),
-          Container(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+            Container(
             padding: const EdgeInsets.only(left: 20, bottom: 5),
             child: FutureBuilder<List<String>>(
                 future: this.getNames(),
@@ -134,6 +150,7 @@ class _CreateStoryCardState extends State<CreateStoryCard>{
                 }
             ),
           ),
+
           Align(
             alignment: Alignment.bottomRight,
             child: Container(
@@ -159,12 +176,15 @@ class _CreateStoryCardState extends State<CreateStoryCard>{
                   }
                   else{
                     createStory(body, author, this.emotion);
+                    updateStoryLst();
                     Navigator.pop(context);
                   }
                 },
-                child: const Icon(FontAwesomeIcons.paperPlane, size: 30)
+                child: const Icon(FontAwesomeIcons.paperPlane, size: 20)
               )
             )
+          )
+            ],
           )
         ],
       )
