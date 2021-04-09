@@ -157,6 +157,9 @@ class _moodDetailsState extends State<moodDetails>{
         child: FloatingActionButton(
           onPressed: () =>
           {
+          logVisit('OpenStorySharing', {
+          "from": "MoodDetail", "emoji":moodId
+          }),
             showDialog<void>(
               context: context,
               barrierDismissible: false, // user must tap button!
