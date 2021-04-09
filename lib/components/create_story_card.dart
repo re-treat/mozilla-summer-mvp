@@ -7,7 +7,7 @@ import 'package:oktoast/oktoast.dart';
 
 class CreateStoryCard extends StatefulWidget {
   var emotion;
-  CreateStoryCard(emotionId,callback) { this.emotion = emotionId; }
+  CreateStoryCard(emotionId) { this.emotion = emotionId; }
 
   @override
   _CreateStoryCardState createState() => _CreateStoryCardState(this.emotion);
