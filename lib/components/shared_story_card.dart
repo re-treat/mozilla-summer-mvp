@@ -109,8 +109,13 @@ class _SharedStoryCardState extends State<SharedStoryCard> {
                                   width: 41,
                                   height: 41,
                                   decoration: new BoxDecoration(
-                                      color: Colors.grey,
+                                      color: getRndColor(),
                                       shape: BoxShape.circle
+                                  ),
+                                  alignment:Alignment.center ,
+                                  child: Text(
+                                      widget.story.author.split(' ')[1].substring(0,1),
+                                      style:avatarInitialStyle
                                   ),
                                 ),
                                 Padding(

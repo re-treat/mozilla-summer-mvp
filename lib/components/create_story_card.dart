@@ -54,7 +54,7 @@ class _CreateStoryCardState extends State<CreateStoryCard>{
                 child: Text(
                 "Post my story",
                 style: kLargeButtonTextStyle,
-                ) 
+                )
               ),
               Align(
                 alignment: Alignment.topRight,
@@ -175,9 +175,11 @@ class _CreateStoryCardState extends State<CreateStoryCard>{
                     );
                   }
                   else{
-                    createStory(body, author, this.emotion);
-                    updateStoryLst();
+                    createStory(body, author, this.emotion).then(
+                        (value)=> updateStoryLst()
+                    );
                     Navigator.pop(context);
+                    //updateStoryLst();
                   }
                 },
                 child: const Icon(FontAwesomeIcons.paperPlane, size: 20)

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
+import 'dart:math';
 import 'package:retreatapp/screens/mood_details.dart';
 
 // For most pages, please use B&W, greys, and blues
@@ -64,6 +65,29 @@ const sharedStoryAuthorStyle = TextStyle(
     fontWeight: FontWeight.w600,
     fontFamily: 'OpenSans'
 );
+
+
+const avatarInitialStyle = TextStyle(
+    fontSize: 20.0,
+    color: Colors.white,
+    fontWeight: FontWeight.w600,
+    fontFamily: 'OpenSans'
+);
+var rnd = new Random.secure();
+const avatarColors = [Colors.orange,Colors.blue,Colors.red,Colors.purple,Colors.green];
+Color getRndColor (){
+  var color = rnd.nextInt(avatarColors.length);
+  return avatarColors[color];
+}
+TextStyle getAvatarInitialStyle() {
+  var color = rnd.nextInt(avatarColors.length);
+ return TextStyle(
+     fontSize: 20.0,
+     color: avatarColors[color],
+     fontWeight: FontWeight.w600,
+     fontFamily: 'OpenSans'
+ );
+}
 
 const sharedStoryBodyStyle = TextStyle(
   fontSize: 16.0,
