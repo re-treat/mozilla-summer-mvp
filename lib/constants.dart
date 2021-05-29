@@ -75,6 +75,156 @@ const avatarInitialStyle = TextStyle(
 );
 var rnd = new Random.secure();
 const avatarColors = [Colors.orange,Colors.blue,Colors.red,Colors.purple,Colors.green];
+const animals = [
+  'dog',
+  'antelope',
+  'ferret',
+  'beaver',
+  'chinchilla',
+  'deer',
+  'elephant',
+  'dolphin',
+  'camel',
+  'eagle',
+  'flamingo',
+  'bird',
+  'gorilla',
+  'bee',
+  'hamster',
+  'goose',
+  'caterpillar',
+  'chipmunk',
+  'crab',
+  'eel',
+  'coyote',
+  'beetle',
+  'alpaca',
+  'alligator',
+  'falcon',
+  'goat'
+];
+
+var avatarAnimals = [
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/dog.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/antelope.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/ferret.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/beaver.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/chinchilla.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/deer.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/elephant.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/dolphin.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/camel.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/eagle.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/flamingo.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/bird.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/gorilla.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/bee.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/hamster.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/goose.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/caterpillar.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/chipmunk.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/crab.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/eel.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/coyote.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/beetle.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/alpaca.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/alligator.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/falcon.png'),
+    fit: BoxFit.cover,
+  ),
+  new DecorationImage(
+    image: new ExactAssetImage('images/avatar/goat.png'),
+    fit: BoxFit.cover,
+  ),
+];
+
+DecorationImage getAvatarBG(String name){
+  for (var i=0;i<animals.length;i++){
+    String animalName = animals[i];
+    if (name.toLowerCase().contains(animalName)){
+      return new DecorationImage(
+        image: new ExactAssetImage('images/avatar/'+animalName+'.png'),
+        fit: BoxFit.cover,
+      );
+    }
+  }
+  var idx = rnd.nextInt(animals.length);
+  return avatarAnimals[idx];
+
+}
 Color getRndColor (){
   var color = rnd.nextInt(avatarColors.length);
   return avatarColors[color];
