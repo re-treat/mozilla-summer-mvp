@@ -114,7 +114,7 @@ class _SharedStoryCardState extends State<SharedStoryCard> {
                                   ),
                                   alignment:Alignment.center ,
                                   child: Text(
-                                      widget.story.author.split(' ')[1].substring(0,1),
+                                      "",
                                       style:avatarInitialStyle
                                   ),
                                 ),
